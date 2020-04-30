@@ -1,39 +1,57 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Dashboard</title>
+  <title>Map</title>
   <link rel="stylesheet" href="./static/lib/css//bootstrap.min.css">
   <link rel="stylesheet" href="./static/lib/css/keen-dashboards.css">
   <link rel="stylesheet" href="./static/lib/css/dc.css">
   <link rel="stylesheet" href="./static/css/custom.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
+  integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+  crossorigin=""/>
 
 
 </head>
-<body class="application">
-
+<body class="application">   
   <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
     <div class="container-fluid">
       <div class="navbar-header">
-        <a class="navbar-brand" href="./">Dashboard</a>
+        <a class="navbar-brand" href="./">Map</a>
       </div>
     </div>
   </div>
 
-  <div class="container-fluid">
-    <div class="row">
+  <div id="mapid" style="height:500px"></div>
 
-    </div>
-  </div>
-
+  <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
+   integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
+   crossorigin=""></script>
   <script src="./static/lib/js/jquery.min.js"></script>
   <script src="./static/lib/js/bootstrap.min.js"></script>
   <script src="./static/lib/js/crossfilter.js"></script>
   <script src="./static/lib/js/d3.js"></script>
   <script src="./static/lib/js/dc.js"></script>
   <script src="./static/lib/js/queue.js"></script>
-
-
   <script src="./static/lib/js/keen.min.js"></script>
-  <script src='./static/js/graphs.js' type='text/javascript'></script>
+  <script src="./static/lib/js/us-states.js"></script>
+
+  <!-- I tried putting this in an external javascript file (see map.js) but somehow it didn't work, not sure why -->
+  <script>
+    // creates map
+    var mapboxAccessToken = "pk.eyJ1IjoiY2Z5dSIsImEiOiJjazlpMW8zazgxNGJ4M2ZvNGZ4c3BnaDk2In0.w2voJd0D3iz6s6KjouJ9pg";
+    var map = L.map('mapid').setView([37.8, -96], 4);
+  
+    L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=' + mapboxAccessToken, {
+        id: 'mapbox/light-v9',
+        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+        tileSize: 512,
+        zoomOffset: -1
+    }).addTo(map);
+  
+    // add states data to the map
+    L.geoJson(statesData).addTo(map);
+  </script>
+  
+  <!-- <script src='./static/js/map.js'></script> -->
 </body>
 </html>

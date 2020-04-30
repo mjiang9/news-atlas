@@ -2,3 +2,8 @@
     fill: black;
     font-size: 12px;
 }
+
+/* this has no effect on the app, not sure why, so I added an inline style element */
+#mapid { 
+    height: 500px; 
+}
