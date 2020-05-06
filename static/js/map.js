@@ -9,9 +9,6 @@ L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_toke
     zoomOffset: -1
 }).addTo(map);
 
-// adds states data to the map
-// L.geoJson(statesData).addTo(map);
-
 var geojson;
 
 function highlightFeature(e) {
@@ -27,6 +24,7 @@ function highlightFeature(e) {
     if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
         layer.bringToFront();
     }
+    info.update(layer.feature.properties);
 }
 
 function getColor(d) {
@@ -53,6 +51,7 @@ function style(feature) {
 
 function resetHighlight(e) {
     geojson.resetStyle(e.target);
+    info.update();
 }
 
 function zoomToFeature(e) {
@@ -71,3 +70,17 @@ geojson = L.geoJson(statesData, {
     style: style,
     onEachFeature: onEachFeature
 }).addTo(map);
+
+var info = L.control();
+
+info.onAdd = function (map) {
+    this._div = L.DomUtil.create('div', 'info');
+    this.update();
+    return this._div;
+};
+
+info.update = function (props) {
+    this._div.innerHTML = props ? props.name : 'Hover over a state'; 
+};
+
+info.addTo(map);
