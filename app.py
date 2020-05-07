@@ -15,12 +15,14 @@ app = Flask(__name__)
 def index():
     return render_template("index.html")
 
-@app.route("/news")
-def getnews():
-    top_headlines = newsapi.get_top_headlines(q='california',
-                                              language='en',
-                                              country='us')
-    return top_headlines
+@app.route("/news/<state>")
+def getnews(state):
+    print(f"state to query: {state}")
+    # top_headlines = newsapi.get_top_headlines(q=str(state),
+                                              # language='en',
+                                              # country='us')
+    headlines = newsapi.get_everything(q=state)
+    return headlines
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0',port=5000,debug=True)

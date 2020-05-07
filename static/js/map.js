@@ -58,11 +58,16 @@ function zoomToFeature(e) {
     map.fitBounds(e.target.getBounds());
 }
 
+function getNews(e) {
+  var layer = e.target;
+  info.getNewsState(layer.feature.properties);
+}
+
 function onEachFeature(feature, layer) {
     layer.on({
         mouseover: highlightFeature,
         mouseout: resetHighlight,
-        click: zoomToFeature
+        click: getNews
     });
 }
 
@@ -80,7 +85,28 @@ info.onAdd = function (map) {
 };
 
 info.update = function (props) {
-    this._div.innerHTML = props ? props.name : 'Hover over a state'; 
+    this._div.innerHTML = '<h4>Top News for</h4>' +  (props ?
+        '<b>' + props.name + '</b><br />'+ props.density + ' people / mi<sup>2</sup>'
+        : 'Click a state');
+};
+
+info.getNewsState = function (props) {
+    var articles;
+    console.log(props.name)
+    fetch('/news/' + props.name)
+    .then(function (response) {
+        return response.json();
+    }).then(function (text) {
+        console.log('GET response text:');
+        articles = text["articles"]
+        console.log(articles[0].description)
+
+        document.getElementById('mapid').innerHTML = '<h4>Top News for</h4>' +  (props ?
+            '<b>' + props.name + '</b><br />'+ articles[0].description
+            : 'Click a state');
+    });
+
+
 };
 
 info.addTo(map);
