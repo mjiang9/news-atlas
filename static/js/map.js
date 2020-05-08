@@ -82,7 +82,7 @@ function getNewsState(props) {
 
 function getNews(e) {
   var layer = e.target;
-  info.getNewsState(layer.feature.properties);
+  getNewsState(layer.feature.properties);
 }
 
 function onEachFeature(feature, layer) {
@@ -115,5 +115,4 @@ var info = L.control();
 
 info.onAdd = onAdd;
 info.update = update;
-info.getNewsState = getNewsState;
 info.addTo(map);
