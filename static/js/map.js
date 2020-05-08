@@ -1,6 +1,6 @@
 // creates map
 var mapboxAccessToken = "pk.eyJ1IjoiY2Z5dSIsImEiOiJjazlpMW8zazgxNGJ4M2ZvNGZ4c3BnaDk2In0.w2voJd0D3iz6s6KjouJ9pg";
-var map = L.map('mapid', {scrollWheelZoom: false}).setView([37.8, -96], 4);
+var map = L.map('map').setView([37.8, -96], 4);
 
 L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=' + mapboxAccessToken, {
     id: 'mapbox/light-v9',
@@ -73,7 +73,7 @@ function getNewsState(props) {
         for (i = 0; i < articles.length; i++)
           articlestext += articles[i].title + "<br /><br />";
 
-        document.getElementsByClassName("info")[0].innerHTML =
+        document.getElementById("info").innerHTML =
             '<h4>Top News for ' +  (props ?
             '<b>' + props.name + '</b><br /></h4>'+
             articlestext : '</h4>Click a state');
@@ -95,7 +95,7 @@ function onEachFeature(feature, layer) {
 }
 
 function onAdd(map) {
-    this._div = L.DomUtil.create('div', 'info');
+    this._div = document.getElementById("info");
     this.update();
     return this._div;
 }
@@ -111,8 +111,3 @@ geojson = L.geoJson(statesData, {
     onEachFeature: onEachFeature
 }).addTo(map);
 
-var info = L.control();
-
-info.onAdd = onAdd;
-info.update = update;
-info.addTo(map);
