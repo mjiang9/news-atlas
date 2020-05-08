@@ -24,7 +24,7 @@ function highlightFeature(e) {
     if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
         layer.bringToFront();
     }
-    info.update(layer.feature.properties);
+    // info.update(layer.feature.properties);
 }
 
 function getColor(d) {
@@ -51,7 +51,7 @@ function style(feature) {
 
 function resetHighlight(e) {
     geojson.resetStyle(e.target);
-    info.update();
+    // info.update();
 }
 
 function zoomToFeature(e) {
@@ -86,8 +86,8 @@ info.onAdd = function (map) {
 
 info.update = function (props) {
     this._div.innerHTML = '<h4>Top News for</h4>' +  (props ?
-        '<b>' + props.name + '</b><br />'+ props.density + ' people / mi<sup>2</sup>'
-        : 'Click a state');
+        '<b>' + props.name + '</b><br />'+ props.density +
+        ' people / mi<sup>2</sup>' : 'Click a state');
 };
 
 info.getNewsState = function (props) {
@@ -100,10 +100,17 @@ info.getNewsState = function (props) {
         console.log('GET response text:');
         articles = text["articles"]
         console.log(articles[0].description)
+        articlestext = ""
+        var i;
+        for (i = 0; i < articles.length; i++)
+          articlestext += articles[i].description + "\n\n";
 
-        document.getElementById('mapid').innerHTML = '<h4>Top News for</h4>' +  (props ?
-            '<b>' + props.name + '</b><br />'+ articles[0].description
-            : 'Click a state');
+        // document.getElementById('mapid').innerHTML = '<h4>Top News for</h4>' +  (props ?
+        //     '<b>' + props.name + '</b><br />'+ articles[0].description
+        //     : 'Click a state');
+        document.getElementsByClassName("info")[0].innerHTML = '<h4>Top News for</h4>' +  (props ?
+            '<b>' + props.name + '</b><br />'+
+            articlestext : 'Click a state');
     });
 
 
