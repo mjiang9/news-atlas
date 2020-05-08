@@ -103,14 +103,15 @@ info.getNewsState = function (props) {
         articlestext = ""
         var i;
         for (i = 0; i < articles.length; i++)
-          articlestext += articles[i].description + "\n\n";
+          articlestext += articles[i].title + "<br /><br />";
 
         // document.getElementById('mapid').innerHTML = '<h4>Top News for</h4>' +  (props ?
         //     '<b>' + props.name + '</b><br />'+ articles[0].description
         //     : 'Click a state');
-        document.getElementsByClassName("info")[0].innerHTML = '<h4>Top News for</h4>' +  (props ?
-            '<b>' + props.name + '</b><br />'+
-            articlestext : 'Click a state');
+        document.getElementsByClassName("info")[0].innerHTML =
+            '<h4>Top News for ' +  (props ?
+            '<b>' + props.name + '</b><br /></h4>'+
+            articlestext : '</h4>Click a state');
     });
 
 
