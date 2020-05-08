@@ -1,6 +1,6 @@
 // creates map
 var mapboxAccessToken = "pk.eyJ1IjoiY2Z5dSIsImEiOiJjazlpMW8zazgxNGJ4M2ZvNGZ4c3BnaDk2In0.w2voJd0D3iz6s6KjouJ9pg";
-var map = L.map('mapid').setView([37.8, -96], 4);
+var map = L.map('mapid', {scrollWheelZoom: false}).setView([37.8, -96], 4);
 
 L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=' + mapboxAccessToken, {
     id: 'mapbox/light-v9',
@@ -67,7 +67,8 @@ function onEachFeature(feature, layer) {
     layer.on({
         mouseover: highlightFeature,
         mouseout: resetHighlight,
-        click: getNews
+        click: getNews,
+        dblclick: zoomToFeature,
     });
 }
 
@@ -100,14 +101,11 @@ info.getNewsState = function (props) {
         console.log('GET response text:');
         articles = text["articles"]
         console.log(articles[0].description)
-        articlestext = ""
+        articlestext = "<img src=\"" + articles[0].urlToImage + "\" style=\"width: 280px;\"><br /><br />"
         var i;
         for (i = 0; i < articles.length; i++)
           articlestext += articles[i].title + "<br /><br />";
 
-        // document.getElementById('mapid').innerHTML = '<h4>Top News for</h4>' +  (props ?
-        //     '<b>' + props.name + '</b><br />'+ articles[0].description
-        //     : 'Click a state');
         document.getElementsByClassName("info")[0].innerHTML =
             '<h4>Top News for ' +  (props ?
             '<b>' + props.name + '</b><br /></h4>'+
