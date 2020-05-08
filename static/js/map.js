@@ -11,22 +11,6 @@ L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_toke
 
 var geojson;
 
-function highlightFeature(e) {
-    var layer = e.target;
-
-    layer.setStyle({
-        weight: 5,
-        color: '#666',
-        dashArray: '',
-        fillOpacity: 0.7
-    });
-
-    if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
-        layer.bringToFront();
-    }
-    // info.update(layer.feature.properties);
-}
-
 function getColor(d) {
     return d > 1000 ? '#800026' :
            d > 500  ? '#BD0026' :
@@ -49,6 +33,22 @@ function style(feature) {
     };
 }
 
+function highlightFeature(e) {
+    var layer = e.target;
+
+    layer.setStyle({
+        weight: 5,
+        color: '#666',
+        dashArray: '',
+        fillOpacity: 0.7
+    });
+
+    if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+        layer.bringToFront();
+    }
+    // info.update(layer.feature.properties);
+}
+
 function resetHighlight(e) {
     geojson.resetStyle(e.target);
     // info.update();
@@ -58,40 +58,7 @@ function zoomToFeature(e) {
     map.fitBounds(e.target.getBounds());
 }
 
-function getNews(e) {
-  var layer = e.target;
-  info.getNewsState(layer.feature.properties);
-}
-
-function onEachFeature(feature, layer) {
-    layer.on({
-        mouseover: highlightFeature,
-        mouseout: resetHighlight,
-        click: getNews,
-        dblclick: zoomToFeature,
-    });
-}
-
-geojson = L.geoJson(statesData, {
-    style: style,
-    onEachFeature: onEachFeature
-}).addTo(map);
-
-var info = L.control();
-
-info.onAdd = function (map) {
-    this._div = L.DomUtil.create('div', 'info');
-    this.update();
-    return this._div;
-};
-
-info.update = function (props) {
-    this._div.innerHTML = '<h4>Top News for</h4>' +  (props ?
-        '<b>' + props.name + '</b><br />'+ props.density +
-        ' people / mi<sup>2</sup>' : 'Click a state');
-};
-
-info.getNewsState = function (props) {
+function getNewsState(props) {
     var articles;
     console.log(props.name)
     fetch('/news/' + props.name)
@@ -111,8 +78,42 @@ info.getNewsState = function (props) {
             '<b>' + props.name + '</b><br /></h4>'+
             articlestext : '</h4>Click a state');
     });
+}
 
+function getNews(e) {
+  var layer = e.target;
+  info.getNewsState(layer.feature.properties);
+}
 
-};
+function onEachFeature(feature, layer) {
+    layer.on({
+        mouseover: highlightFeature,
+        mouseout: resetHighlight,
+        click: getNews,
+        dblclick: zoomToFeature,
+    });
+}
 
+function onAdd(map) {
+    this._div = L.DomUtil.create('div', 'info');
+    this.update();
+    return this._div;
+}
+
+function update(props) {
+    this._div.innerHTML = '<h4>Top News for</h4>' +  (props ?
+        '<b>' + props.name + '</b><br />'+ props.density +
+        ' people / mi<sup>2</sup>' : 'Click a state');
+}
+
+geojson = L.geoJson(statesData, {
+    style: style,
+    onEachFeature: onEachFeature
+}).addTo(map);
+
+var info = L.control();
+
+info.onAdd = onAdd;
+info.update = update;
+info.getNewsState = getNewsState;
 info.addTo(map);
