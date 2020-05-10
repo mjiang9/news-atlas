@@ -46,7 +46,10 @@
     font-weight: bold;
     color: #333;
 }
-.hide {
+.hide_button {
     text-decoration: underline;
     cursor: pointer;
+}
+.desc {
+    font-weight: normal;
 }

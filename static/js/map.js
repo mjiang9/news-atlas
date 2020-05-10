@@ -73,36 +73,46 @@ function getStateArticles(state) {
         console.log('GET response text:');
         articles = text["articles"]
         console.log(articles[0].description)
-        articlestext = "<img src=\"" + articles[0].urlToImage + "\" style=\"width: 280px;\"><br /><br />"
+
+        $("#info").html('<h4>Top News for ' +  (state ? '<b>' + state + '</b><br /></h4>' : '</h4>Click a state'));
+
+        var $img = $("<img>").attr({
+            "src": articles[0].urlToImage,
+            "style": "width: 280px"
+        });
+
+        $("#info").append($img, "<br /><br />");
+
         var i;
-        for (i = 0; i < articles.length; i++)
-          articlestext += "<div id=\"article" + i + "\" class=\"headline\" onclick=\"clickArticle('" + 
-                            articles[i].url + "', '" + articles[i].publishedAt  + "', '" +
-                            articles[i].source.name + "', '" + articles[i].description + "', '" +
-                            articles[i].urlToImage + "', '" + state + "', '" + i + "')\">" + 
-                            articles[i].title + "</div><br />";
-        document.getElementById("info").innerHTML =
-            '<h4>Top News for ' +  (state ?
-            '<b>' + state + '</b><br /></h4>'+
-            articlestext : '</h4>Click a state');
+        for (i = 0; i < articles.length; i++) {
+            var $div = $("<div>", {id: "article" + i, "class": "headline"}).text(articles[i].title);
+            $("#info").append($div, "<br />");
+
+            $div.click({url: articles[i].url, date: articles[i].publishedAt, source: articles[i].source.name,
+            desc: articles[i].description, img: articles[i].urlToImage, state: state, id: i}, clickArticle);
+        }
     });
 }
 
-function clickArticle(url, date, source, desc, img, state, id) {
+function clickArticle(e) {
     console.log("clicked!");
-    console.log(desc);
+    console.log(e.data.desc);
     // console.log(source);
-    if (document.getElementById("desc" + id))
-        return
-    document.getElementById("article" + id).outerHTML += 
-        "<div id=\"desc" + id + "\" style=\"font-weight: normal;\"><small>" + 
-        "<div style=\"text-decoration: underline; cursor: pointer; \" onclick=\'unclickArticle(\"" + 
-        id + "\")\'>[Hide] </div>" + desc + "<a target=\"_blank\" href=\"" + url + "\"> Read more</a>" + "</small></div>";
-}
 
-function unclickArticle(id) {
-    console.log("unclicked!");
-    document.getElementById("desc" + id).remove();
+    if ($("#desc" + e.data.id).length)
+        return;
+    
+    var $hide = $("<div>", {"class": "hide_button"}).text("[Hide]");
+
+    $hide.click(function() {
+        console.log("unclicked!");
+        $("#desc" + e.data.id).remove();
+    })
+
+    var $desc = $("<div>)", {id: "desc" + e.data.id, "class": "desc"});
+    $desc.append($("<small>").append($hide, e.data.desc, "<a target=\"_blank\" href=\"" + e.data.url + "\"> Read more</a>"));
+    
+    $("#article" + e.data.id).after($desc);
 }
 
 function getNews(e) {
