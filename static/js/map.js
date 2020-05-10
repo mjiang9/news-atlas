@@ -61,7 +61,12 @@ function zoomToFeature(e) {
 function getNewsState(props) {
     var articles;
     console.log(props.name)
-    fetch('/news/' + props.name)
+    getStateArticles(props.name)
+}
+
+// replace this with database query later
+function getStateArticles(state) {
+    fetch('/news/' + state)
     .then(function (response) {
         return response.json();
     }).then(function (text) {
@@ -71,13 +76,33 @@ function getNewsState(props) {
         articlestext = "<img src=\"" + articles[0].urlToImage + "\" style=\"width: 280px;\"><br /><br />"
         var i;
         for (i = 0; i < articles.length; i++)
-          articlestext += articles[i].title + "<br /><br />";
-
+          articlestext += "<div id=\"article" + i + "\" class=\"headline\" onclick=\"clickArticle('" + 
+                            articles[i].url + "', '" + articles[i].publishedAt  + "', '" +
+                            articles[i].source.name + "', '" + articles[i].description + "', '" +
+                            articles[i].urlToImage + "', '" + state + "', '" + i + "')\">" + 
+                            articles[i].title + "</div><br />";
         document.getElementById("info").innerHTML =
-            '<h4>Top News for ' +  (props ?
-            '<b>' + props.name + '</b><br /></h4>'+
+            '<h4>Top News for ' +  (state ?
+            '<b>' + state + '</b><br /></h4>'+
             articlestext : '</h4>Click a state');
     });
+}
+
+function clickArticle(url, date, source, desc, img, state, id) {
+    console.log("clicked!");
+    console.log(desc);
+    // console.log(source);
+    if (document.getElementById("desc" + id))
+        return
+    document.getElementById("article" + id).outerHTML += 
+        "<div id=\"desc" + id + "\" style=\"font-weight: normal;\"><small>" + 
+        "<div style=\"text-decoration: underline; cursor: pointer; \" onclick=\'unclickArticle(\"" + 
+        id + "\")\'>[Hide] </div>" + desc + "<a target=\"_blank\" href=\"" + url + "\"> Read more</a>" + "</small></div>";
+}
+
+function unclickArticle(id) {
+    console.log("unclicked!");
+    document.getElementById("desc" + id).remove();
 }
 
 function getNews(e) {

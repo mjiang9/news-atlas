@@ -37,3 +37,16 @@
     margin: 0 0 5px;
     color: #777;
 }
+
+#info .headline {
+    color: #444;
+    cursor: pointer;
+}
+#info .headline:hover {
+    font-weight: bold;
+    color: #333;
+}
+.hide {
+    text-decoration: underline;
+    cursor: pointer;
+}
