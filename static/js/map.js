@@ -9,7 +9,8 @@ L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_toke
     zoomOffset: -1
 }).addTo(map);
 
-var geojson;
+var countyGeojson, stateGeojson;
+var lastStateLayer;
 
 function getColor(d) {
     return d > 1000 ? '#800026' :
@@ -50,8 +51,20 @@ function highlightFeature(e) {
 }
 
 function resetHighlight(e) {
-    geojson.resetStyle(e.target);
+    stateGeojson.resetStyle(e.target);
+    if (map.hasLayer(countyGeojson)) {
+        countyGeojson.resetStyle(e.target);
+    }
     // info.update();
+}
+
+function resetMap() {
+    if (map.hasLayer(countyGeojson))
+    map.removeLayer(countyGeojson);
+
+    if (lastStateLayer) {
+        lastStateLayer.on('click', stateOnClick);
+    }
 }
 
 function zoomToFeature(e) {
@@ -99,8 +112,10 @@ function clickArticle(e) {
     console.log(e.data.desc);
     // console.log(source);
 
-    if ($("#desc" + e.data.id).length)
+    if ($("#desc" + e.data.id).length) {
+        $("#desc" + e.data.id).remove();
         return;
+    }
     
     var $hide = $("<div>", {"class": "hide_button"}).text("[Hide]");
 
@@ -111,22 +126,48 @@ function clickArticle(e) {
 
     var $desc = $("<div>)", {id: "desc" + e.data.id, "class": "desc"});
     $desc.append($("<small>").append($hide, e.data.desc, "<a target=\"_blank\" href=\"" + e.data.url + "\"> Read more</a>"));
-    
+
     $("#article" + e.data.id).after($desc);
 }
 
-function getNews(e) {
+function stateOnClick(e) {
   var layer = e.target;
-  getNewsState(layer.feature.properties);
+  getNewsState(layer.feature.properties);  
+  zoomToFeature(e);
+  resetMap();
+
+  countyGeojson = L.geoJson(countyData, {
+      style: style,
+      onEachFeature: onEachCounty,
+      filter: function(feature) {
+          return feature.properties.STATE === layer.feature.id;
+      }
+  }).addTo(map);
+
+  layer.off('click', stateOnClick);
+  lastStateLayer = layer;
+  lastZoomLevel = map.getZoom();
 }
 
-function onEachFeature(feature, layer) {
+// add action
+function countyOnClick(e) {
+    return;
+}
+
+function onEachState(feature, layer) {
     layer.on({
         mouseover: highlightFeature,
         mouseout: resetHighlight,
-        click: getNews,
-        dblclick: zoomToFeature,
+        click: stateOnClick,
     });
+}
+
+function onEachCounty(feature, layer) {
+    layer.on({
+        mouseover: highlightFeature,
+        mouseout: resetHighlight,
+        click: countyOnClick,
+    })
 }
 
 function onAdd(map) {
@@ -141,8 +182,11 @@ function update(props) {
         ' people / mi<sup>2</sup>' : 'Click a state');
 }
 
-geojson = L.geoJson(statesData, {
+var stateGeojson = L.geoJson(statesData, {
     style: style,
-    onEachFeature: onEachFeature
+    onEachFeature: onEachState
 }).addTo(map);
 
+map.on('zoomend', function(){
+    if (map.getZoom() < 5) resetMap();
+})
