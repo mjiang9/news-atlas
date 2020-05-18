@@ -53,3 +53,28 @@
 .desc {
     font-weight: normal;
 }
+.tag {
+    display: inline;
+    margin-left: 5px;
+    margin-right: 5px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    padding-left: 6px;
+    padding-right: 6px;
+}
+#querybar {
+    margin-bottom: 10px;
+}
+/*.btn:focus, .btn:active:focus, .btn.active:focus {
+    outline: none;
+}*/
+.btn-primary.active {
+    background-color: #285e8e;
+}
+
+#querybox {
+    display: inline;
+}
+#submit {
+    margin-right: 10px;
+}
