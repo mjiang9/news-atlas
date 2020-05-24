@@ -65,11 +65,9 @@
 #querybar {
     margin-bottom: 10px;
 }
-/*.btn:focus, .btn:active:focus, .btn.active:focus {
-    outline: none;
-}*/
-.btn-primary.active {
-    background-color: #285e8e;
+
+.btn-primary.selected {
+    background-color: #1f4a6f;
 }
 
 #querybox {
