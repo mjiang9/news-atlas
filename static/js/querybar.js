@@ -1,7 +1,8 @@
 function submitQuery() {
 	querytext = $('#querytext').val();
 	console.log("submitted query " + querytext);
-	tagcount = (Storage.get('tagcount') + 1) || (4 + 1);
+	tagcount = Storage.get('tagcount') || 4;
+	tagcount += 1;
 	var $btn = $("<button>").attr({
             "type": "button",
             "id": "tag" + tagcount,
