@@ -5,11 +5,19 @@ import json
 from bson import json_util
 from bson.json_util import dumps
 from newsapi import NewsApiClient
+from flask_sqlalchemy import SQLAlchemy
+import os
 
 # Init
 newsapi = NewsApiClient(api_key='92f7976f22e94e109f47ef929d205515')
 
 app = Flask(__name__)
+
+app.config.from_object(os.environ['APP_SETTINGS'])
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db = SQLAlchemy(app)
+
+# from models import News
 
 @app.route("/")
 def index():
