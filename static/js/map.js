@@ -92,7 +92,7 @@ function getStateArticles(state) {
         selected = Storage.get('selected');
         articles = filter_news(articles, state, (selected ? selected.tag : null))
 
-        console.log("filtered: " + articles.length + " articles about " + state + ", " + selected.tag);
+        console.log("filtered: " + articles.length + " articles about " + state + (selected ? ", " + selected.tag : ""));
 
         $("#info").html('<h4>Top' + (selected ? '<b> ' + selected.tagname + ' </b>' : ' ') + 
             'News for ' +  (state ? '<b>' + state + '</b><br /></h4>' : '</h4>Click a state'));
@@ -118,17 +118,20 @@ function getStateArticles(state) {
 
 function filter_news(articles, state, selected) {
     results = []
+    relevant = []
     for (i = 0; i < articles.length; i++) {
         desc = articles[i].description + articles[i].content + articles[i].title;
         desc = desc.toLowerCase();
         if (!desc.includes(state.toLowerCase()))
             continue
-        // if (selected && !desc.includes(selected.tag))
-        //     continue
+        if (selected && desc.includes(selected)) {
+            relevant.push(articles[i])
+            continue
+        }
         results.push(articles[i])
     }
-
-    return results
+    console.log(relevant.length + " results")
+    return (relevant.length > 0 ? relevant : results)
 }
 
 function clickArticle(e) {
