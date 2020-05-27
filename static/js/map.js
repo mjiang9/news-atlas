@@ -74,6 +74,7 @@ function zoomToFeature(e) {
 function getNewsState(props) {
     var articles;
     console.log(props.name)
+    Storage.set('cur_state', props.name)
     getStateArticles(props.name)
 }
 
@@ -84,17 +85,25 @@ function getStateArticles(state) {
         return response.json();
     }).then(function (text) {
         console.log('GET response text:');
-        articles = text["articles"]
-        console.log(articles[0].description)
+        articles = text["articles"];
 
-        $("#info").html('<h4>Top News for ' +  (state ? '<b>' + state + '</b><br /></h4>' : '</h4>Click a state'));
+        console.log(articles.length + " articles about " + state);
 
-        var $img = $("<img>").attr({
+        selected = Storage.get('selected');
+        articles = filter_news(articles, state, (selected ? selected.tag : null))
+
+        console.log("filtered: " + articles.length + " articles about " + state + ", " + selected.tag);
+
+        $("#info").html('<h4>Top' + (selected ? '<b> ' + selected.tagname + ' </b>' : ' ') + 
+            'News for ' +  (state ? '<b>' + state + '</b><br /></h4>' : '</h4>Click a state'));
+
+        if (articles.length > 0) {
+            var $img = $("<img>").attr({
             "src": articles[0].urlToImage,
             "style": "width: 280px"
-        });
-
-        $("#info").append($img, "<br /><br />");
+            });
+            $("#info").append($img, "<br /><br />");
+        }    
 
         var i;
         for (i = 0; i < articles.length; i++) {
@@ -105,6 +114,21 @@ function getStateArticles(state) {
             desc: articles[i].description, img: articles[i].urlToImage, state: state, id: i}, clickArticle);
         }
     });
+}
+
+function filter_news(articles, state, selected) {
+    results = []
+    for (i = 0; i < articles.length; i++) {
+        desc = articles[i].description + articles[i].content + articles[i].title;
+        desc = desc.toLowerCase();
+        if (!desc.includes(state.toLowerCase()))
+            continue
+        // if (selected && !desc.includes(selected.tag))
+        //     continue
+        results.push(articles[i])
+    }
+
+    return results
 }
 
 function clickArticle(e) {

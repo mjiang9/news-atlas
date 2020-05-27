@@ -22,19 +22,23 @@ function updateTag(event) {
 	selected = Storage.get('selected');
 	tagid = "#" + event.target.id;
 	tag = event.target.innerText.toLowerCase();
+	tagname = event.target.innerText;
 	if (selected && selected.id == tagid) {
 		$(selected.id).removeClass('selected');
+		$(selected.id).removeClass('active');
 		selected = null;
 	} else {
 		if (selected != null) {
 			$(selected.id).removeClass('selected');
 			$(selected.id).removeClass('active');
 		}
-		selected = {'id': tagid, 'tag': tag};
+		selected = {'id': tagid, 'tag': tag, 'tagname': tagname};
 		$(tagid).addClass('selected');
 	}
 	Storage.set('selected', selected);
 	console.log("selected", selected);
+	cur_state = Storage.get('cur_state')
+	if (cur_state) getStateArticles(cur_state);
 }
 
 var Storage = {
