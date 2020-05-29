@@ -70,6 +70,12 @@
     background-color: #1f4a6f;
 }
 
+.btn-primary.active:not(:hover) {
+    background-color: #428bca;
+    border-color: #357ebd;
+    box-shadow: none;
+}
+
 #querybox {
     display: inline;
 }
