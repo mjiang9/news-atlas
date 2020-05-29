@@ -12,6 +12,9 @@ L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_toke
 var countyGeojson, stateGeojson;
 var lastStateLayer;
 
+// Replace later with news heatmap
+var DENSITY = {'01': 94.65, '02': 1.264, '04': 57.05, '05': 56.43, '06': 241.7, '08': 49.33, '09': 739.1, '10': 464.3, '11': 10065, '12': 353.4, '13': 169.5, '15': 214.1, '16': 19.15, '17': 231.5, '18': 181.7, '19': 54.81, '20': 35.09, '21': 110, '22': 105, '23': 43.04, '24': 596.3, '25': 840.2, '26': 173.9, '27': 67.14, '28': 63.5, '29': 87.26, '30': 6.858, '31': 23.97, '32': 24.8, '33': 147, '34': 1189, '35': 17.16, '36': 412.3, '37': 198.2, '38': 9.916, '39': 281.9, '40': 55.22, '41': 40.33, '42': 284.3, '44': 1006, '45': 155.4, '46': 98.07, '47': 88.08, '48': 98.07, '49': 34.3, '50': 67.73, '51': 204.5, '53': 102.6, '54': 77.06, '55': 105.2, '56': 5.851, '72': 1082};
+
 function getColor(d) {
     return d > 1000 ? '#800026' :
            d > 500  ? '#BD0026' :
@@ -25,7 +28,7 @@ function getColor(d) {
 
 function style(feature) {
     return {
-        fillColor: getColor(feature.properties.density),
+        fillColor: getColor(DENSITY[feature.properties.STATE]),
         weight: 2,
         opacity: 1,
         color: 'white',
@@ -36,7 +39,7 @@ function style(feature) {
 
 function highlightFeature(e) {
     console.log("feature ", e)
-    if (Storage.get('cur_state') == e.target.feature.properties['name'])
+    if (Storage.get('cur_state') == e.target.feature.properties['NAME'])
         return;
     var layer = e.target;
 
@@ -76,9 +79,9 @@ function zoomToFeature(e) {
 
 function getNewsState(props) {
     var articles;
-    console.log(props.name)
-    Storage.set('cur_state', props.name)
-    getStateArticles(props.name)
+    console.log(props.NAME)
+    Storage.set('cur_state', props.NAME)
+    getStateArticles(props.NAME)
 }
 
 // replace this with database query later
@@ -178,7 +181,7 @@ function stateOnClick(e) {
       style: style,
       onEachFeature: onEachCounty,
       filter: function(feature) {
-          return feature.properties.STATE === layer.feature.id;
+          return feature.properties.STATE === layer.feature.properties.STATE;
       }
   }).addTo(map);
 
@@ -220,8 +223,7 @@ function onAdd(map) {
 
 function update(props) {
     this._div.innerHTML = '<h4>Top News for</h4>' +  (props ?
-        '<b>' + props.name + '</b><br />'+ props.density +
-        ' people / mi<sup>2</sup>' : 'Click a state');
+        '<b>' + props.NAME + '</b><br />' : 'Click a state');
 }
 
 var stateGeojson = L.geoJson(statesData, {
