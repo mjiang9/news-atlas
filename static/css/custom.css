@@ -76,3 +76,14 @@
 #submit {
     margin-right: 10px;
 }
+
+#how_to_use {
+    padding: 6px 8px;
+    font: 14px/16px Arial, Helvetica, sans-serif;
+    background: rgba(255,255,255,0.9);
+    border-radius: 5px;
+}
+
+#how_to_use h4 {
+    text-align: center;
+}
