@@ -7,6 +7,7 @@ from bson.json_util import dumps
 from newsapi import NewsApiClient
 from flask_sqlalchemy import SQLAlchemy
 import os
+import datetime as dt
 
 # Init
 newsapi = NewsApiClient(api_key='92f7976f22e94e109f47ef929d205515')
@@ -26,10 +27,13 @@ def index():
 @app.route("/news/<state>")
 def getnews(state):
     print(f"state to query: {state}")
-    # top_headlines = newsapi.get_top_headlines(q=str(state),
-                                              # language='en',
-                                              # country='us')
-    headlines = newsapi.get_everything(q=state)
+    if state == "Washington":
+    	state = "Washington NOT DC NOT D.C."
+    weekago = dt.datetime.now() - dt.timedelta(days=7)
+
+    headlines = newsapi.get_everything(q=state + " AND (coronavirus OR covid)", 
+    								   page_size=100, language='en',
+                                       from_param=weekago.strftime("%Y-%m-%d"), sort_by="relevancy")
     return headlines
 
 if __name__ == "__main__":
