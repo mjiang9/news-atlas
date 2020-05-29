@@ -8,7 +8,7 @@ class News(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     state = db.Column(db.String())
     source = db.Column(db.String())
-    title = db.Column(db.String())
+    title = db.Column(db.String(), unique=True)
     description = db.Column(db.String())
     date = db.Column(db.String())
 
