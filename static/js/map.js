@@ -35,6 +35,9 @@ function style(feature) {
 }
 
 function highlightFeature(e) {
+    console.log("feature ", e)
+    if (Storage.get('cur_state') == e.target.feature.properties['name'])
+        return;
     var layer = e.target;
 
     layer.setStyle({
@@ -130,7 +133,7 @@ function filter_news(articles, state, selected) {
         results.push(articles[i])
     }
     console.log(relevant.length + " results")
-    return (relevant.length > 0 ? relevant : results)
+    return (relevant.length > 0 ? relevant : (results.length > 0 ? results : articles));
 }
 
 var monthNames = [
@@ -186,6 +189,10 @@ function stateOnClick(e) {
 
 // add action
 function countyOnClick(e) {
+    county = e.target.feature.properties['NAME'] + " County"
+    state = Storage.get('cur_state')
+    console.log("Clicked " + county + ", " + state)
+    getStateArticles(county + ", " + state)
     return;
 }
 
