@@ -1,5 +1,7 @@
 function submitQuery() {
-	querytext = $('#querytext').val();
+	querytext = $('#querytext').val().trim();
+	if (querytext.length == 0)
+		return
 	console.log("submitted query " + querytext);
 	tagcount = Storage.get('tagcount') || 4;
 	tagcount += 1;

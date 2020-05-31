@@ -17,6 +17,7 @@
     z-index: 1;
 }
 
+/*News Display box and Articles*/
 #info {
     position: absolute;
     padding: 6px 8px;
@@ -25,19 +26,17 @@
     box-shadow: 0 0 15px rgba(0,0,0,0.2);
     border-radius: 5px;
     width: 24%;
-    max-height: 450px;
+    max-height: 420px;
     left: 75%;
     margin-top: 6px;
     z-index: 2;
     overflow: scroll;
 }
-
 #info h4 {
     text-align: center;
     margin: 0 0 5px;
     color: #777;
 }
-
 #info .headline {
     color: #444;
     cursor: pointer;
@@ -53,6 +52,8 @@
 .desc {
     font-weight: normal;
 }
+
+/*Tag buttons and Query bar*/
 .tag {
     display: inline;
     margin-left: 5px;
@@ -65,17 +66,14 @@
 #querybar {
     margin-bottom: 10px;
 }
-
-.btn-primary.selected {
-    background-color: #1f4a6f;
-}
-
-.btn-primary.active:not(:hover) {
+.btn-primary.active:not(:hover):not(.selected) {
     background-color: #428bca;
     border-color: #357ebd;
     box-shadow: none;
 }
-
+.btn-primary.selected {
+    background-color: #1f4a6f;
+}
 #querybox {
     display: inline;
 }
@@ -83,6 +81,7 @@
     margin-right: 10px;
 }
 
+/*How to use box*/
 #how_to_use {
     margin: 10px;
     padding: 6px 8px;
@@ -90,7 +89,6 @@
     background: rgba(255,255,255,0.9);
     border-radius: 5px;
 }
-
 #how_to_use h4 {
     text-align: center;
 }
