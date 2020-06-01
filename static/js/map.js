@@ -84,41 +84,53 @@ function getNewsState(props) {
     getStateArticles(props.NAME)
 }
 
-// replace this with database query later
+function getCountyArticles(county, state) {
+    fetch('/news/' + state + "/" + county)
+    .then(function (response) {
+        return response.json();
+    }).then(function (text) {
+        processNewsResult(county, text)
+    });
+}
+
 function getStateArticles(state) {
     fetch('/news/' + state)
     .then(function (response) {
         return response.json();
     }).then(function (text) {
-        console.log('GET response text:');
-        articles = text["articles"];
-
-        console.log(articles.length + " articles about " + state);
-
-        selected = Storage.get('selected');
-        articles = filter_news(articles, state, (selected ? selected.tag : null))
-
-        console.log("filtered: " + articles.length + " articles about " + state + (selected ? ", " + selected.tag : ""));
-
-        $("#info").html('<h4>Top' + (selected ? '<b> ' + selected.tagname + ' </b>' : ' ') + 
-            'News for ' +  (state ? '<b>' + state + '</b><br /></h4>' : '</h4>Click a state'));
-
-        if (articles.length > 0) {
-            var $img = $("<img>").attr({
-            "src": articles[0].urlToImage,
-            "style": "width: 280px; display: block; margin-left: auto; margin-right: auto;"
-            });
-            $("#info").append($img, "<br />");
-        }    
-
-        var i;
-        for (i = 0; i < articles.length; i++) {
-            var $div = $("<div>", {id: "article" + i, "class": "headline"}).text(articles[i].title);
-            $("#info").append($div, "<br />");
-            $div.click({url: articles[i].url, date: articles[i].publishedAt, source: articles[i].source.name,
-            desc: articles[i].description, img: articles[i].urlToImage, state: state, id: i}, clickArticle);
-        }
+        processNewsResult(state, text)
     });
+}
+
+function processNewsResult(state, text) {
+    console.log('GET response text:');
+    articles = text["articles"];
+
+    console.log(articles.length + " articles about " + state);
+
+    selected = Storage.get('selected');
+    articles = filter_news(articles, state, (selected ? selected.tag : null))
+
+    console.log("filtered: " + articles.length + " articles about " + state + (selected ? ", " + selected.tag : ""));
+
+    $("#info").html('<h4>Top' + (selected ? '<b> ' + selected.tagname + ' </b>' : ' ') + 
+        'News for ' +  (state ? '<b>' + state + '</b><br /></h4>' : '</h4>Click a state'));
+
+    if (articles.length > 0) {
+        var $img = $("<img>").attr({
+        "src": articles[0].urlToImage,
+        "style": "width: 280px; display: block; margin-left: auto; margin-right: auto;"
+        });
+        $("#info").append($img, "<br />");
+    }    
+
+    var i;
+    for (i = 0; i < articles.length; i++) {
+        var $div = $("<div>", {id: "article" + i, "class": "headline"}).text(articles[i].title);
+        $("#info").append($div, "<br />");
+        $div.click({url: articles[i].url, date: articles[i].publishedAt, source: articles[i].source.name,
+        desc: articles[i].description, img: articles[i].urlToImage, state: state, id: i}, clickArticle);
+    }
 }
 
 function filter_news(articles, state, selected) {
@@ -195,7 +207,7 @@ function countyOnClick(e) {
     county = e.target.feature.properties['NAME'] + " County"
     state = Storage.get('cur_state')
     console.log("Clicked " + county + ", " + state)
-    getStateArticles(county + ", " + state)
+    getCountyArticles(county, state)
     return;
 }
 

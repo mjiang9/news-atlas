@@ -7,17 +7,13 @@ class News(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     state = db.Column(db.String())
-    source = db.Column(db.String())
-    title = db.Column(db.String(), unique=True)
-    description = db.Column(db.String())
-    date = db.Column(db.String())
+    county = db.Column(db.String())
+    result = db.Column(db.JSON())
 
     def __init__(self, state, source, title, description, date):
+        self.county = county
         self.state = state
-        self.source = source
-        self.title = title
-        self.description = description
-        self.date = date
+        self.result = result
 
     def __repr__(self):
         return '<id {}>'.format(self.id)

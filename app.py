@@ -7,7 +7,11 @@ from bson.json_util import dumps
 from newsapi import NewsApiClient
 from flask_sqlalchemy import SQLAlchemy
 import os
+import psycopg2
 import datetime as dt
+
+# Constants
+
 
 # Init
 newsapi = NewsApiClient(api_key='92f7976f22e94e109f47ef929d205515')
@@ -18,23 +22,53 @@ app.config.from_object(os.environ['APP_SETTINGS'])
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
-# from models import News
+DATABASE_URL = os.environ['DATABASE_URL']
+conn = psycopg2.connect(DATABASE_URL, sslmode='require')
 
 @app.route("/")
 def index():
     return render_template("index.html")
 
 @app.route("/news/<state>")
-def getnews(state):
-    print(f"state to query: {state}")
-    if state == "Washington":
-    	state = "Washington NOT DC NOT D.C."
-    weekago = dt.datetime.now() - dt.timedelta(days=7)
+def getStateNews(state):
+    return getnews(state)
 
-    headlines = newsapi.get_everything(q=state + " AND (coronavirus OR covid)", 
-    								   page_size=100, language='en',
-                                       from_param=weekago.strftime("%Y-%m-%d"), sort_by="relevancy")
+@app.route("/news/<state>/<county>")
+def getnews(state, county = ''):
+    print(f"state to query: {state}, county to query: {county}")
+    cursor = conn.cursor()
+    query = f"SELECT * from news WHERE county = '{county}' AND state = '{state}';"
+    cursor.execute(query)
+    conn.commit()
+
+    result = cursor.fetchall()
+    # print(result)
+    if (len(result) == 0 or len(result[0][3]['articles']) == 0):
+        print("No entry found in database")
+        if (state == 'Washington'):
+            state = "Washington NOT DC NOT D.C."
+        weekago = dt.datetime.now() - dt.timedelta(days=7)
+        headlines = newsapi.get_everything(q=state + " AND " + county + " AND (coronavirus OR covid)", 
+                                        page_size=100, language='en',
+                                        from_param=weekago.strftime("%Y-%m-%d"), sort_by="relevancy")
+        # no record existed 
+        if (len(result) == 0):
+            query = """ INSERT INTO news (state, county, result) VALUES (%s,%s,%s) """
+            record = (state, county, json.dumps(headlines))
+            print("Row created")
+        # record was empty
+        else:
+            query = """ UPDATE news SET result = %s WHERE state = %s AND county = %s """
+            record = (json.dumps(headlines), state, county)
+            print("Row updated")
+        cursor.execute(query, record)
+        conn.commit()
+    else:
+        headlines = {'articles': result[0][3]['articles']}
+    
+    cursor.close()
     return headlines
+
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0',port=5000,debug=True)
