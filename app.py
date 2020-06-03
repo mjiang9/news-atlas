@@ -47,9 +47,11 @@ def getNews(state, county = ''):
     if (len(result) == 0 or len(result[0][3]['articles']) == 0):
         print("No entry found in database")
         if (state == 'Washington'):
-            state = "Washington NOT DC NOT D.C."
+            query_state = "Washington NOT DC NOT D.C."
+        else:
+            query_state = state
         weekago = dt.datetime.now() - dt.timedelta(days=7)
-        headlines = newsapi.get_everything(q=state + ' AND \"' + county + '\" AND (coronavirus OR covid)', 
+        headlines = newsapi.get_everything(q=query_state + ' AND \"' + county + '\" AND (coronavirus OR covid)', 
                                         page_size=100, language='en',
                                         from_param=weekago.strftime("%Y-%m-%d"), sort_by="relevancy")
         # no record existed 
