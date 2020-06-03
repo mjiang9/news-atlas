@@ -10,7 +10,8 @@ states = {'01': 'Alabama', '02': 'Alaska', '04': 'Arizona', '05': 'Arkansas', '0
 '48': 'Texas', '49': 'Utah', '50': 'Vermont', '51': 'Virginia', '53': 'Washington', '54': 'West Virginia', '55': 'Wisconsin', '56': 'Wyoming', '72': 'Puerto Rico'}
 
 sched = BlockingScheduler()
-newsapi = NewsApiClient(api_key='92f7976f22e94e109f47ef929d205515')
+newsapi = NewsApiClient(api_key="c89e608c4ae345e5a03cc1db04983b3a")
+#newsapi = NewsApiClient(api_key='92f7976f22e94e109f47ef929d205515')
 DATABASE_URL = os.environ['DATABASE_URL']
 
 # @sched.scheduled_job('interval', hours = 24)
