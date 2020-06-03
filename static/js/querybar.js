@@ -42,12 +42,3 @@ function updateTag(event) {
 	cur_state = Storage.get('cur_state')
 	if (cur_state) getStateArticles(cur_state);
 }
-
-var Storage = {
-    set: function(key, value) {
-        localStorage[key] = JSON.stringify(value);
-    },
-    get: function(key) {
-        return localStorage[key] ? JSON.parse(localStorage[key]) : null;
-    }
-};

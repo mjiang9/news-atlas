@@ -31,10 +31,10 @@ def index():
 
 @app.route("/news/<state>")
 def getStateNews(state):
-    return getnews(state)
+    return getNews(state)
 
 @app.route("/news/<state>/<county>")
-def getnews(state, county = ''):
+def getNews(state, county = ''):
     print(f"state to query: {state}, county to query: {county}")
     cursor = conn.cursor()
     query = f"SELECT * from news WHERE county = '{county}' AND state = '{state}';"
@@ -48,7 +48,7 @@ def getnews(state, county = ''):
         if (state == 'Washington'):
             state = "Washington NOT DC NOT D.C."
         weekago = dt.datetime.now() - dt.timedelta(days=7)
-        headlines = newsapi.get_everything(q=state + " AND " + county + " AND (coronavirus OR covid)", 
+        headlines = newsapi.get_everything(q=state + ' AND \"' + county + '\" AND (coronavirus OR covid)', 
                                         page_size=100, language='en',
                                         from_param=weekago.strftime("%Y-%m-%d"), sort_by="relevancy")
         # no record existed 
@@ -64,7 +64,7 @@ def getnews(state, county = ''):
         cursor.execute(query, record)
         conn.commit()
     else:
-        headlines = {'articles': result[0][3]['articles']}
+        headlines = {'articles': result[0][3]['articles'], 'totalResults': result[0][3]['totalResults']}
     
     cursor.close()
     return headlines
