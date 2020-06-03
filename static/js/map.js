@@ -46,7 +46,7 @@ function numArticles(state) {
 }
 
 function style(feature) {
-    if (feature.properties['LSAD'] == 'County') {
+    if (feature.properties['COUNTY'] != null) {
         // console.log(feature.properties['NAME'])
         // counts = countdict[feature.properties['NAME']];
         count = 0
