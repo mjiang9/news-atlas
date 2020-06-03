@@ -14,7 +14,8 @@ import datetime as dt
 
 
 # Init
-newsapi = NewsApiClient(api_key='92f7976f22e94e109f47ef929d205515')
+newsapi = NewsApiClient(api_key="c89e608c4ae345e5a03cc1db04983b3a")
+#newsapi = NewsApiClient(api_key='92f7976f22e94e109f47ef929d205515')
 
 app = Flask(__name__)
 
@@ -23,7 +24,6 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
 DATABASE_URL = os.environ['DATABASE_URL']
-conn = psycopg2.connect(DATABASE_URL, sslmode='require')
 
 @app.route("/")
 def index():
@@ -35,7 +35,8 @@ def getStateNews(state):
 
 @app.route("/news/<state>/<county>")
 def getNews(state, county = ''):
-    print(f"state to query: {state}, county to query: {county}")
+    print(f"state to query: {state}, county to query: {county}")  
+    conn = psycopg2.connect(DATABASE_URL, sslmode='require')
     cursor = conn.cursor()
     query = f"SELECT * from news WHERE county = '{county}' AND state = '{state}';"
     cursor.execute(query)
@@ -67,6 +68,7 @@ def getNews(state, county = ''):
         headlines = {'articles': result[0][3]['articles'], 'totalResults': result[0][3]['totalResults']}
     
     cursor.close()
+    conn.close()
     return headlines
 
 
