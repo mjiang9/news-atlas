@@ -71,10 +71,19 @@ function style(feature) {
     };
 }
 
+var popup = L.popup();
+function movePopup(e) {
+    type = (e.target.feature.properties['COUNTY'] != null) ? "county" : "state";
+    popup.setContent("<b>" + e.target.feature.properties['NAME'] + (type == "county" ? " County" : "") +
+                     "</b><br><i><small>Click to view " + type + " news</small></i>");
+    dx = (type == "county") ? 0.5 : 1;
+    popup.setLatLng(L.latLng(e.latlng.lat + dx, e.latlng.lng + dx)).openOn(map);
+}
+
 function highlightFeature(e) {
-    // if (Storage.get('cur_state') == e.target.feature.properties['NAME'])
-    //     return;
     var layer = e.target;
+    layer.bindPopup(popup);
+    layer.openPopup();
 
     layer.setStyle({
         weight: 5,
@@ -91,6 +100,7 @@ function highlightFeature(e) {
 }
 
 function resetHighlight(e) {
+    e.target.closePopup();
     stateGeojson.resetStyle(e.target);
     if (map.hasLayer(countyGeojson)) {
         countyGeojson.resetStyle(e.target);
@@ -99,8 +109,11 @@ function resetHighlight(e) {
 }
 
 function resetMap() {
+    Storage.set('cur_state', null)
+    $("#info").html('<h4>COVID-19 News</h4>');
+
     if (map.hasLayer(countyGeojson))
-    map.removeLayer(countyGeojson);
+        map.removeLayer(countyGeojson);
 
     if (lastStateLayer) {
         lastStateLayer.on('click', stateOnClick);
@@ -147,8 +160,7 @@ function processNewsResult(state, text) {
 
     console.log("filtered: " + articles.length + " articles about " + state + (selected ? ", " + selected.tag : ""));
 
-    $("#info").html('<h4>Top' + (selected ? '<b> ' + selected.tagname + ' </b>' : ' ') + 
-        'News for ' +  (state ? '<b>' + state + '</b><br /></h4>' : '</h4>Click a state'));
+    $("#info").html('<h4>COVID-19 News: <b>' +  (state ? state : 'National') + '</b><br /></h4>');
 
     if (articles.length > 0) {
         var $img = $("<img>").attr({
@@ -219,6 +231,7 @@ function clickArticle(e) {
 
 function stateOnClick(e) {
   var layer = e.target;
+  layer.closePopup();
   getNewsState(layer.feature.properties);  
   zoomToFeature(e);
   resetMap();
@@ -249,6 +262,7 @@ function onEachState(feature, layer) {
     layer.on({
         mouseover: highlightFeature,
         mouseout: resetHighlight,
+        mousemove: movePopup,
         click: stateOnClick,
     });
 }
@@ -257,19 +271,9 @@ function onEachCounty(feature, layer) {
     layer.on({
         mouseover: highlightFeature,
         mouseout: resetHighlight,
+        mousemove: movePopup,
         click: countyOnClick,
     })
-}
-
-// function onAdd(map) {
-//     this._div = document.getElementById("info");
-//     this.update();
-//     return this._div;
-// }
-
-function update(props) {
-    this._div.innerHTML = '<h4>Top News for</h4>' +  (props ?
-        '<b>' + props.NAME + '</b><br />' : 'Click a state');
 }
 
 var stateGeojson = L.geoJson(statesData, {
@@ -295,7 +299,7 @@ legend.onAdd = function (map) {
     for (var i = 0; i < grades.length; i++) {
         div.innerHTML +=
             '<i style="background:' + getColor(grades[i] + 1) + '"></i> ' +
-            grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+');
+            grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<span class="br18"></span>' : '+');
     }
 
     return div;

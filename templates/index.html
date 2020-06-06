@@ -5,11 +5,11 @@
   <link rel="stylesheet" href="./static/lib/css//bootstrap.min.css">
   <link rel="stylesheet" href="./static/lib/css/keen-dashboards.css">
   <link rel="stylesheet" href="./static/lib/css/dc.css">
-  <link rel="stylesheet" href="./static/css/custom.css">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
   integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
   crossorigin=""/>
   <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="./static/css/custom.css">
   <link rel="shortcut icon" href="#" />
   <meta charset="utf-8">
 
@@ -23,7 +23,7 @@
     </div>
   </div>
 
-  <div id="container">
+  <!-- <div id="container">
     <div id="querybar">
       <form class="form-inline" id="querybox">
         <input class="form-control form-control-sm ml-3 w-75" type="text" id="querytext" placeholder="Search" aria-label="Search">
@@ -34,14 +34,15 @@
         <button type="button" id = "tag3" class="float-left btn btn-primary tag" data-toggle="button" aria-pressed="false" autocomplete="off" onclick="updateTag(event); return false">governor</button>
         <button type="button" id = "tag4" class="float-left btn btn-primary tag" data-toggle="button" aria-pressed="false" autocomplete="off" onclick="updateTag(event); return false">restrictions</button>
     </div>
-  </div>
+  </div> -->
 
   <div id="container">
     <div id="map"></div>
-    <div id="info"><h4>Choose a state!</h4></div>
+    <div id="info"><h4>COVID-19 News</h4></div>
+    <div style="margin-top: -5px; padding: 2px 2px 5px 10px; line-height: 2;"><i>Click a state to view recent COVID-19 news for the state, zoom in/out to switch between county-level and state-level display</i></div>
   </div>
 
-  <div id="container">
+  <!-- <div id="container">
     <div id="how_to_use">
       <h4>How To Use</h4>
       <ul>
@@ -51,7 +52,7 @@
         <li>Use the search bar to add a custom filter, then select one of the filters to apply it.</li>
       </ul>
     </div>
-  </div>
+  </div> -->
 
   <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
    integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
