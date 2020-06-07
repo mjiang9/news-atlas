@@ -160,22 +160,36 @@ function processNewsResult(state, text) {
 
     console.log("filtered: " + articles.length + " articles about " + state + (selected ? ", " + selected.tag : ""));
 
-    $("#info").html('<h4>COVID-19 News: <b>' +  (state ? state : 'National') + '</b><br /></h4>');
+    $("#info").html('<h4>COVID-19 News: <b>' +  (state ? state : 'National') + '</b><br /></h4><hr>');
 
-    if (articles.length > 0) {
-        var $img = $("<img>").attr({
-        "src": articles[0].urlToImage,
-        "style": "width: 280px; display: block; margin-left: auto; margin-right: auto;"
-        });
-        $("#info").append($img, "<br />");
-    }    
+    // if (articles.length > 0) {
+    //     var $img = $("<img>").attr({
+    //     "src": articles[0].urlToImage,
+    //     "style": "width: 280px; display: block; margin-left: auto; margin-right: auto;"
+    //     });
+    //     $("#info").append($img, "<br />");
+    // }    
 
     var i;
     for (i = 0; i < articles.length; i++) {
-        var $div = $("<div>", {id: "article" + i, "class": "headline"}).text(articles[i].title);
-        $("#info").append($div, "<br />");
-        $div.click({url: articles[i].url, date: articles[i].publishedAt, source: articles[i].source.name,
-        desc: articles[i].description, img: articles[i].urlToImage, state: state, id: i}, clickArticle);
+        var $wrap = $("<div>", {id: "article" + i, "class": "article"});
+        var $div = $("<a class=\"headline\" target=\"_blank\" href=\"" + articles[i].url + "\">").text(articles[i].title);
+        $("#info").append($wrap);
+        $($div).appendTo("#article" + i);
+        var date = new Date(articles[i].publishedAt)
+        var datestr = monthNames[date.getMonth()] + " " + date.getDate() + ", " + date.getFullYear();
+        var $datesource = $("<div>", {"class": "datesource"}).text(datestr + " -- " + articles[i].source.name);
+        $($datesource).appendTo("#article" + i);
+        // $("#info").append($datesource);
+        if (articles[i].urlToImage) {
+            var $img = $("<img>").attr({
+            "src": articles[i].urlToImage });
+            $("#info").append($img);
+        }
+        $("#info").append("<br />");
+
+        // $div.click({url: articles[i].url, date: articles[i].publishedAt, source: articles[i].source.name,
+        // desc: articles[i].description, img: articles[i].urlToImage, state: state, id: i}, clickArticle);
     }
 }
 
@@ -201,33 +215,33 @@ var monthNames = [
   "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"
 ];
 
-function clickArticle(e) {
-    console.log("clicked!");
-    console.log(e.data.desc);
-    // console.log(source);
+// function clickArticle(e) {
+//     console.log("clicked!");
+//     console.log(e.data.desc);
+//     // console.log(source);
 
-    if ($("#desc" + e.data.id).length) {
-        $("#desc" + e.data.id).remove();
-        return;
-    }
+//     if ($("#desc" + e.data.id).length) {
+//         $("#desc" + e.data.id).remove();
+//         return;
+//     }
     
-    var $hide = $("<div>", {"class": "hide_button"}).text("[Hide]");
-    var date = new Date(e.data.date)
-    var datestr = monthNames[date.getMonth()] + " " + date.getDate() + ", " + date.getFullYear();
-    var $datesource = $("<div>", {"style": "font-size: 11px; cursor: auto; font-style: italic"}).text(datestr + " -- " + e.data.source);
+//     var $hide = $("<div>", {"class": "hide_button"}).text("[Hide]");
+//     var date = new Date(e.data.date)
+//     var datestr = monthNames[date.getMonth()] + " " + date.getDate() + ", " + date.getFullYear();
+//     var $datesource = $("<div>", {"style": "font-size: 11px; cursor: auto; font-style: italic"}).text(datestr + " -- " + e.data.source);
 
-    $hide.click(function() {
-        console.log("unclicked!");
-        $("#desc" + e.data.id).remove();
-    })
+//     $hide.click(function() {
+//         console.log("unclicked!");
+//         $("#desc" + e.data.id).remove();
+//     })
 
-    var $desc = $("<div>)", {id: "desc" + e.data.id, "class": "desc"});
-    $desc.append($datesource);
+//     var $desc = $("<div>)", {id: "desc" + e.data.id, "class": "desc"});
+//     $desc.append($datesource);
 
-    $desc.append($("<small>").append($hide, e.data.desc, "<a target=\"_blank\" href=\"" + e.data.url + "\"> Read more</a>"));
+//     $desc.append($("<small>").append($hide, e.data.desc, "<a target=\"_blank\" href=\"" + e.data.url + "\"> Read more</a>"));
 
-    $("#article" + e.data.id).after($desc);
-}
+//     $("#article" + e.data.id).after($desc);
+// }
 
 function stateOnClick(e) {
   var layer = e.target;
@@ -293,7 +307,7 @@ legend.onAdd = function (map) {
         grades = [0, 250, 500, 750, 1000, 2000, 5000, 10000],
         labels = [];
 
-    div.innerHTML += '<h5><b>Total Article Count</b></h5><h6>(Last 7 Days)</h6>'
+    div.innerHTML += '<h5><b>Total Article Count</b></h5><h6 style=\"font-style: italic;\">Last 7 Days</h6>'
 
     // loop through our density intervals and generate a label with a colored square for each interval
     for (var i = 0; i < grades.length; i++) {

@@ -39,14 +39,14 @@ body.application {
 /*News Display box and Articles*/
 #info {
     position: absolute;
-    padding: 6px 8px;
+    padding: 6px 6px 6px 12px;
     font: 14px/16px Arial, Helvetica, sans-serif;
-    background: rgba(255,255,255,0.8);
+    background: rgba(255,255,255,0.9);
     box-shadow: 0 0 15px rgba(0,0,0,0.2);
     border-radius: 5px;
-    width: 24%;
+    width: 26%;
     max-height: 600px;
-    left: 75%;
+    left: 74%;
     margin-top: 6px;
     z-index: 2;
     overflow: scroll;
@@ -54,15 +54,36 @@ body.application {
 #info h4 {
     text-align: center;
     margin: 0 0 5px;
-    color: #777;
+    color: #333;
+    font-size: 20px;
+}
+#info .article {
+    display: inline-block;
+    margin-bottom: 24px;
+    width: 68%;
 }
 #info .headline {
-    color: #444;
+    color: #555;
     cursor: pointer;
+    font-size: 16px;
+    line-height: 18px;
+    font-weight: bold;
+}
+#info img {
+    width: 27%;
+    height: 60px;
+    vertical-align: top;
+    border-radius: 8px;
+    margin: 4px 4px 14px 7px;
 }
 #info .headline:hover {
-    font-weight: bold;
-    color: #333;
+    text-decoration: underline;
+}
+.datesource {
+    font-size: 11px; 
+    cursor: auto; 
+    font-style: italic;
+    font-weight: normal;
 }
 .hide_button {
     text-decoration: underline;
@@ -115,7 +136,7 @@ body.application {
 /*Legend*/
 .legend {
     line-height: 18px;
-    color: #555;
+    color: #333;
 }
 .legend i {
     width: 18px;
