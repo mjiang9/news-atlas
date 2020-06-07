@@ -244,23 +244,28 @@ var monthNames = [
 // }
 
 function stateOnClick(e) {
-  var layer = e.target;
-  layer.closePopup();
-  getNewsState(layer.feature.properties);  
-  zoomToFeature(e);
-  resetMap();
+    var layer = e.target;
+    layer.closePopup();
+    getNewsState(layer.feature.properties);  
+    zoomToFeature(e);
+  
+    if (map.hasLayer(countyGeojson))
+        map.removeLayer(countyGeojson);
 
-  countyGeojson = L.geoJson(countyData, {
-      style: style,
-      onEachFeature: onEachCounty,
-      filter: function(feature) {
-          return feature.properties.STATE === layer.feature.properties.STATE;
-      }
-  }).addTo(map);
+    if (lastStateLayer)
+        lastStateLayer.on('click', stateOnClick);
 
-  layer.off('click', stateOnClick);
-  lastStateLayer = layer;
-  lastZoomLevel = map.getZoom();
+    countyGeojson = L.geoJson(countyData, {
+        style: style,
+        onEachFeature: onEachCounty,
+        filter: function(feature) {
+            return feature.properties.STATE === layer.feature.properties.STATE;
+        }
+    }).addTo(map);
+
+    layer.off('click', stateOnClick);
+    lastStateLayer = layer;
+    lastZoomLevel = map.getZoom();
 }
 
 // add action

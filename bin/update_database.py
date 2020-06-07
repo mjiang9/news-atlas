@@ -43,5 +43,6 @@ def clear():
     conn.commit()
     cursor.close()
     conn.close()
+    print("News deleted!")
 
 clear()
