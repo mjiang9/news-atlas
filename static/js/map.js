@@ -304,6 +304,11 @@ map.on('zoomend', function(){
     if (map.getZoom() < 5) resetMap();
 })
 
+map.whenReady(function(){
+    $("#loader").hide();
+    $("#info").css("display", "inline-block")
+})
+
 var legend = L.control({position: 'bottomleft'});
 
 legend.onAdd = function (map) {
