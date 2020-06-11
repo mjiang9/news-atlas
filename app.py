@@ -9,6 +9,7 @@ from flask_sqlalchemy import SQLAlchemy
 import os
 import psycopg2
 import datetime as dt
+from filter_news import filter_news
 
 # Constants
 
@@ -71,7 +72,7 @@ def getNews(state, county = ''):
     
     cursor.close()
     conn.close()
-    return headlines
+    return filter_news(headlines, state, county)
 
 
 if __name__ == "__main__":

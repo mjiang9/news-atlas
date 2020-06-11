@@ -36,10 +36,11 @@ body.application {
     background: rgba(255,255,255,0.9);
 }
 
+/*Loading*/
 #loader {
     position: absolute;
     z-index: 2;
-    top: 50%;
+    top: 44%;
     left: 50%;
     transform: translate(-50%, -50%);
     justify-content: center;
@@ -47,6 +48,9 @@ body.application {
 
 #loading-text {
     margin: auto;
+}
+#loading-text h3 {
+    font-weight: 400;
 }
 
 #spinner {
@@ -62,6 +66,12 @@ body.application {
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
+}
+
+/*Keywords*/
+.keywords {
+    margin-bottom: 18px;
+    color: #777;
 }
 
 /*News Display box and Articles*/
@@ -95,7 +105,7 @@ body.application {
     color: #555;
     cursor: pointer;
     font-size: 16px;
-    line-height: 18px;
+    line-height: 21px;
     font-weight: bold;
 }
 #info img {
@@ -109,7 +119,8 @@ body.application {
     text-decoration: underline;
 }
 .datesource {
-    font-size: 11px; 
+    font-size: 11px;
+    margin-top: 3px;
     cursor: auto; 
     font-style: italic;
     font-weight: normal;

@@ -76,7 +76,7 @@ function movePopup(e) {
     type = (e.target.feature.properties['COUNTY'] != null) ? "county" : "state";
     popup.setContent("<b>" + e.target.feature.properties['NAME'] + (type == "county" ? " County" : "") +
                      "</b><br><i><small>Click to view " + type + " news</small></i>");
-    dx = (type == "county") ? 0.5 : 1;
+    dx = (type == "county") ? 0.5 : 0.75;
     popup.setLatLng(L.latLng(e.latlng.lat + dx, e.latlng.lng + dx)).openOn(map);
 }
 
@@ -156,7 +156,7 @@ function processNewsResult(state, text) {
     console.log(articles.length + " articles about " + state);
 
     selected = Storage.get('selected');
-    articles = filter_news(articles, state, (selected ? selected.tag : null))
+    // articles = filter_news(articles, state, (selected ? selected.tag : null))
 
     console.log("filtered: " + articles.length + " articles about " + state + (selected ? ", " + selected.tag : ""));
 
@@ -168,7 +168,16 @@ function processNewsResult(state, text) {
     //     "style": "width: 280px; display: block; margin-left: auto; margin-right: auto;"
     //     });
     //     $("#info").append($img, "<br />");
-    // }    
+    // }  
+    
+    keywords_text = "<b>Trending:</b> "
+    for (i = 0; i < text["keywords"].length; i++) {
+        keywords_text += text["keywords"][i]
+        if (i != text["keywords"].length - 1) keywords_text += " &middot; "
+    }
+    console.log(keywords_text)
+    var $keywords = $("<div>", {"class": "keywords"}).html(keywords_text);
+    $("#info").append($keywords);
 
     var i;
     for (i = 0; i < articles.length; i++) {
@@ -193,23 +202,23 @@ function processNewsResult(state, text) {
     }
 }
 
-function filter_news(articles, state, selected) {
-    results = []
-    relevant = []
-    for (i = 0; i < articles.length; i++) {
-        desc = articles[i].description + articles[i].content + articles[i].title + articles[i].url;
-        desc = desc.toLowerCase();
-        if (!desc.includes(state.toLowerCase()))
-            continue
-        if (selected && desc.includes(selected)) {
-            relevant.push(articles[i])
-            continue
-        }
-        results.push(articles[i])
-    }
-    console.log(relevant.length + " results")
-    return (relevant.length > 0 ? relevant : (results.length > 0 ? results : articles));
-}
+// function filter_news(articles, state, selected) {
+//     results = []
+//     relevant = []
+//     for (i = 0; i < articles.length; i++) {
+//         desc = articles[i].description + articles[i].content + articles[i].title + articles[i].url;
+//         desc = desc.toLowerCase();
+//         if (!desc.includes(state.toLowerCase()))
+//             continue
+//         if (selected && desc.includes(selected)) {
+//             relevant.push(articles[i])
+//             continue
+//         }
+//         results.push(articles[i])
+//     }
+//     console.log(relevant.length + " results")
+//     return (relevant.length > 0 ? relevant : (results.length > 0 ? results : articles));
+// }
 
 var monthNames = [
   "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"

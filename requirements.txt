@@ -11,6 +11,9 @@ flashtext==2.7
 Flask==1.1.2
 Flask-SQLAlchemy==2.4.3
 gensim==3.8.1
+geographiclib==1.50
+geopy==1.22.0
+geotext==0.4.0
 gunicorn==20.0.4
 matplotlib==3.0.0
 nbformat==4.4.0
