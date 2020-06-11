@@ -58,12 +58,14 @@ def filter_news(headlines, state, county):
 	results = []
 	for i in range(len(headlines)):
 		title = headlines[i]['title'].lower()
+		if headlines[i]['source']['name'].lower() in title:
+			title = title.replace(headlines[i]['source']['name'].lower(), '')
 
 		# filter out if doesn't contain name of county or state
 		if county:
-			if county.lower() not in title and county.lower() not in headlines[i]['description'].lower():
+			if county.lower() not in title and headlines[i]['description'] and county.lower() not in headlines[i]['description'].lower():
 				continue
-		elif state and state.lower() not in title and state.lower() not in headlines[i]['description'].lower():
+		elif state and state.lower() not in title and headlines[i]['description'] and state.lower() not in headlines[i]['description'].lower():
 			continue
 
 		t = word_tokenize(title)

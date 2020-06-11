@@ -170,14 +170,17 @@ function processNewsResult(state, text) {
     //     $("#info").append($img, "<br />");
     // }  
     
-    keywords_text = "<b>Trending:</b> "
-    for (i = 0; i < text["keywords"].length; i++) {
-        keywords_text += text["keywords"][i]
-        if (i != text["keywords"].length - 1) keywords_text += " &middot; "
+    if (text['keywords'].length) {
+        keywords_text = "<b>Trending:</b> <i>"
+        for (i = 0; i < text["keywords"].length; i++) {
+            keywords_text += text["keywords"][i]
+            if (i != text["keywords"].length - 1) keywords_text += " &middot; "
+            else keywords_text += "</i>"
+        }
+        console.log(keywords_text)
+        var $keywords = $("<div>", {"class": "keywords"}).html(keywords_text);
+        $("#info").append($keywords);
     }
-    console.log(keywords_text)
-    var $keywords = $("<div>", {"class": "keywords"}).html(keywords_text);
-    $("#info").append($keywords);
 
     var i;
     for (i = 0; i < articles.length; i++) {
