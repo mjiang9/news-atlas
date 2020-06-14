@@ -9,7 +9,7 @@ from flask_sqlalchemy import SQLAlchemy
 import os
 import psycopg2
 import datetime as dt
-from filter_news import filter_news
+from filter_news import filter_news, get_cities
 
 # Constants
 
@@ -29,6 +29,14 @@ DATABASE_URL = os.environ['DATABASE_URL']
 @app.route("/")
 def index():
     return render_template("index.html")
+
+@app.route("/us")
+def getUS():
+	daysago = dt.datetime.now() - dt.timedelta(days=2)
+	headlines = newsapi.get_everything(q="(coronavirus OR covid) AND (U.S. OR (united states) OR america OR american)", page_size=100, language='en',
+                                       from_param=daysago.strftime("%Y-%m-%d"), sort_by="relevancy", 
+                                       sources="New York Times, CNN, NBC News, The Washington Post, CNBC, Politico, Reuters")
+	return get_cities(headlines)
 
 @app.route("/news/<state>")
 def getStateNews(state):

@@ -3,6 +3,23 @@ from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 import functools
 import operator
+from geotext import GeoText
+from rake_nltk import Rake
+
+def filter_news(headlines, state, county):
+	n = headlines['totalResults']
+	headlines = sorted(headlines['articles'], key=lambda x: x['title'].lower())
+	# remove duplicate headlines, source names from titles
+	r = Rake(max_length=3)
+	tot = ""
+	for i in range(len(headlines)):
+		tot += headlines[i]['title'].lower() + headlines[i]['description'].lower()
+		if headlines[i]['content']:
+			tot += headlines[i]['content'].lower()
+	r.extract_keywords_from_text(tot)
+	keywords = r.get_ranked_phrases()
+	print(keywords)
+	return {'articles': headlines, 'totalResults': n, 'keywords': keywords[:7]}
 
 # flattens a list of form [[a,b], [c,d], ...]
 def flatten(l):
@@ -43,7 +60,7 @@ def update_dicts(t, state, county, d, d2, d3):
 			d3[w] = 1
 	return
 
-def filter_news(headlines, state, county):
+def filter_news_scratch(headlines, state, county):
 	# filter out if: duplicate, doesn't contain state/county
 	# sort by: contains trending keywords (unigrams, bigrams, trigrams) - TODO
 	# identify hotspots? search keywords that correspond to locations - GeoText, geopy - TODO
@@ -115,3 +132,17 @@ def filter_news(headlines, state, county):
 	print("\ntop selected keywords: ", top_all)
 		
 	return {'articles': results, 'totalResults': n, 'keywords': top_all[:7]}
+
+def get_cities(headlines):
+	d = {}
+	print(len(headlines['articles']))
+	for h in headlines['articles']:
+		cities = GeoText(h['title']).cities + GeoText(h['description']).cities
+		print(cities)
+		for city in cities:
+			if city in d.keys():
+				d[city] += 1
+			else:
+				d[city] = 1
+	print(sorted(d.items(), key=lambda x: x[1], reverse=True))
+	return d

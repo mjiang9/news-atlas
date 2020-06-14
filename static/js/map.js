@@ -131,6 +131,19 @@ function getNewsState(props) {
     getStateArticles(props.NAME)
 }
 
+function getUSArticles() {
+    fetch('/us')
+    .then(function (response) {
+        return response.json();
+    }).then(function (text) {
+        processUSResult(text)
+    });
+}
+
+function processUSResult(text) {
+    console.log(text)
+}
+
 function getCountyArticles(county, state) {
     fetch('/news/' + state + "/" + county)
     .then(function (response) {
