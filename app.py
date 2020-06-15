@@ -11,9 +11,6 @@ import psycopg2
 import datetime as dt
 from filter_news import filter_news, get_cities
 
-# Constants
-
-
 # Init
 newsapi = NewsApiClient(api_key="c89e608c4ae345e5a03cc1db04983b3a")
 #newsapi = NewsApiClient(api_key='92f7976f22e94e109f47ef929d205515')
@@ -38,6 +35,19 @@ def getUS():
                                        sources="New York Times, CNN, NBC News, The Washington Post, CNBC, Politico, Reuters")
 	return get_cities(headlines)
 
+@app.route("/trending/<state>")
+def getTrending(state):
+    print("STATE: " + state)
+    conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+    cursor = conn.cursor()
+    query = f"SELECT * from news WHERE county = '' AND state = '{state}';"
+    cursor.execute(query)
+    conn.commit()
+    result = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return {'keywords': result[0][4], 'articles': result[0][3]['articles']}
+
 @app.route("/news/<state>")
 def getStateNews(state):
     return getNews(state)
@@ -52,7 +62,7 @@ def getNews(state, county = ''):
     conn.commit()
 
     result = cursor.fetchall()
-    # print(result)
+    print(result)
     if (len(result) == 0 or len(result[0][3]['articles']) == 0):
         print("No entry found in database")
         if (state == 'Washington'):
@@ -63,24 +73,26 @@ def getNews(state, county = ''):
         headlines = newsapi.get_everything(q=query_state + ' AND \"' + county + '\" AND (coronavirus OR covid)', 
                                         page_size=100, language='en',
                                         from_param=weekago.strftime("%Y-%m-%d"), sort_by="relevancy")
+        filtered_news = filter_news(headlines, state, county)
+
         # no record existed 
         if (len(result) == 0):
-            query = """ INSERT INTO news (state, county, result) VALUES (%s,%s,%s) """
-            record = (state, county, json.dumps(headlines))
+            query = """ INSERT INTO news (state, county, result, keywords) VALUES (%s,%s,%s,%s) """
+            record = (state, county, json.dumps(headlines), filtered_news['keywords'])
             print("Row created")
         # record was empty
         else:
-            query = """ UPDATE news SET result = %s WHERE state = %s AND county = %s """
-            record = (json.dumps(headlines), state, county)
+            query = """ UPDATE news SET result = %s, keywords = %s WHERE state = %s AND county = %s """
+            record = (json.dumps(headlines), state, county, filtered_news['keywords'])
             print("Row updated")
-        cursor.execute(query, record)
+        cursor.execute(query, record) 
         conn.commit()
     else:
-        headlines = {'articles': result[0][3]['articles'], 'totalResults': result[0][3]['totalResults']}
+        filtered_news = {'articles': result[0][3]['articles'], 'totalResults': result[0][3]['totalResults'], 'keywords': result[0][4]}
     
     cursor.close()
     conn.close()
-    return filter_news(headlines, state, county)
+    return filtered_news
 
 
 if __name__ == "__main__":

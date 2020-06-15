@@ -332,6 +332,7 @@ map.on('zoomend', function(){
 map.whenReady(function(){
     $("#loader").hide();
     $("#info").css("display", "inline-block")
+    $("#help").css("display", "inline-block")
 })
 
 var legend = L.control({position: 'bottomleft'});
