@@ -234,14 +234,6 @@ function processNewsResult(state, text) {
     console.log("filtered: " + articles.length + " articles about " + state + (selected ? ", " + selected.tag : ""));
 
     $("#info").html('<h4><b>' +  (state != 'United States' ? state : 'National') + '</b> COVID-19 News<br /></h4><hr>');
-
-    // if (articles.length > 0) {
-    //     var $img = $("<img>").attr({
-    //     "src": articles[0].urlToImage,
-    //     "style": "width: 280px; display: block; margin-left: auto; margin-right: auto;"
-    //     });
-    //     $("#info").append($img, "<br />");
-    // }  
     
     if (text['keywords'].length) {
         keywords_text = "<b>Trending:</b> <i>"
@@ -272,63 +264,13 @@ function processNewsResult(state, text) {
             $("#info").append($img);
         }
         $("#info").append("<br />");
-
-        // $div.click({url: articles[i].url, date: articles[i].publishedAt, source: articles[i].source.name,
-        // desc: articles[i].description, img: articles[i].urlToImage, state: state, id: i}, clickArticle);
     }
 }
-
-// function filter_news(articles, state, selected) {
-//     results = []
-//     relevant = []
-//     for (i = 0; i < articles.length; i++) {
-//         desc = articles[i].description + articles[i].content + articles[i].title + articles[i].url;
-//         desc = desc.toLowerCase();
-//         if (!desc.includes(state.toLowerCase()))
-//             continue
-//         if (selected && desc.includes(selected)) {
-//             relevant.push(articles[i])
-//             continue
-//         }
-//         results.push(articles[i])
-//     }
-//     console.log(relevant.length + " results")
-//     return (relevant.length > 0 ? relevant : (results.length > 0 ? results : articles));
-// }
 
 var monthNames = [
   "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"
 ];
 var dayNames = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-
-
-// function clickArticle(e) {
-//     console.log("clicked!");
-//     console.log(e.data.desc);
-//     // console.log(source);
-
-//     if ($("#desc" + e.data.id).length) {
-//         $("#desc" + e.data.id).remove();
-//         return;
-//     }
-    
-//     var $hide = $("<div>", {"class": "hide_button"}).text("[Hide]");
-//     var date = new Date(e.data.date)
-//     var datestr = monthNames[date.getMonth()] + " " + date.getDate() + ", " + date.getFullYear();
-//     var $datesource = $("<div>", {"style": "font-size: 11px; cursor: auto; font-style: italic"}).text(datestr + " -- " + e.data.source);
-
-//     $hide.click(function() {
-//         console.log("unclicked!");
-//         $("#desc" + e.data.id).remove();
-//     })
-
-//     var $desc = $("<div>)", {id: "desc" + e.data.id, "class": "desc"});
-//     $desc.append($datesource);
-
-//     $desc.append($("<small>").append($hide, e.data.desc, "<a target=\"_blank\" href=\"" + e.data.url + "\"> Read more</a>"));
-
-//     $("#article" + e.data.id).after($desc);
-// }
 
 function stateOnClick(e) {
     var layer = e.target;

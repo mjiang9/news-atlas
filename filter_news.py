@@ -68,13 +68,10 @@ def ranker(x, state, county, top_all):
 
 def filter_news(headlines, state, county):
 	# filter out if: duplicate, doesn't contain state/county
-	# sort by: contains trending keywords (unigrams, bigrams, trigrams) - TODO
 	# identify hotspots? search keywords that correspond to locations - GeoText, geopy - TODO
 	n = headlines['totalResults']
 	d, d2, d3 = {}, {}, {}
 	i = 0
-	# these are meant to map keyword to article for ranking purposes - TODO
-	d_titles, d2_titles, d3_titles = {}, {}, {}
 	# sort headlines alphabetically by title so it's easier to find duplicates
 	headlines = sorted(headlines['articles'], key=lambda x: x['title'].lower())
 	prev = None

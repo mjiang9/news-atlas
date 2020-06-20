@@ -48,10 +48,35 @@ def getCovidInfo():
 
     us = requests.get('https://covidtracking.com/api/v1/us/current.json').json()
     info['USA'] = 'https://www.coronavirus.gov/'
-    counts['USA'] = {'cases': us[0]['positive'], 'deaths': us[0]['deaths']}
+    counts['USA'] = {'cases': us[0]['positive'], 'deaths': us[0]['death']}
 
+    print(f"got COVID info for {len(info)} states and counts for {len(counts)} states")
     return {'info': info, 'counts': counts}
 
+def org(link):
+
+    return
+
+@app.route("/covidhelp/<state>")
+def getCovidHelp(state):
+    """Get donation links from google"""
+    key = 'AIzaSyBVsT8rVffEkfjunpOhNAR3ivGAzgpqZZw'
+    cx = '004593184947520844685:vitre6m1avi'
+    query = f'donate help coronavirus relief {state}'
+    u = f'https://www.googleapis.com/customsearch/v1?key={key}&cx={cx}&q={query}'
+    r = requests.get(u)
+    results = r.json()
+    links = []
+    orgs = set()
+    for result in results['items']:
+        if 'news' in result['link'] or 'https' not in result['link'] or 'www' not in result['displayLink']:
+            continue
+        if org(result['displayLink']) in orgs:
+            continue
+        links.append({'title': result['title'], 'link': result['link'], 'snippet': result['snippet']})
+        orgs.add(result['displayLink'])
+    print(f"got {len(links)} links")
+    return {'links': links[:10]}
 
 @app.route("/trending/<state>")
 def getTrending(state):
