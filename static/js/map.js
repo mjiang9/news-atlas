@@ -22,11 +22,10 @@ var countyGeojson, stateGeojson;
 var lastStateLayer;
 
 function getColor(d) {
-    return d > 10000 ? '#800026' :
-           d > 5000  ? '#BD0026' :
-           d > 2000  ? '#E31A1C' :
-           d > 1000  ? '#FC4E2A' :
-           d > 750   ? '#FD8D3C' :
+    return d > 8000  ? '#BD0026' :
+           d > 4000  ? '#E31A1C' :
+           d > 2000  ? '#FC4E2A' :
+           d > 1000   ? '#FD8D3C' :
            d > 500   ? '#FEB24C' :
            d > 250   ? '#FED976' :
                       '#FFEDA0';
@@ -110,7 +109,8 @@ function resetHighlight(e) {
 
 function resetMap() {
     Storage.set('cur_state', null)
-    $("#info").html('<h4>COVID-19 News</h4>');
+    $("#info").html('<h4><b>National</b> COVID-19 News</h4>');
+    getStateArticles('United States')
 
     if (map.hasLayer(countyGeojson))
         map.removeLayer(countyGeojson);
@@ -173,7 +173,7 @@ function processNewsResult(state, text) {
 
     console.log("filtered: " + articles.length + " articles about " + state + (selected ? ", " + selected.tag : ""));
 
-    $("#info").html('<h4>COVID-19 News: <b>' +  (state ? state : 'National') + '</b><br /></h4><hr>');
+    $("#info").html('<h4><b>' +  (state != 'United States' ? state : 'National') + '</b> COVID-19 News<br /></h4><hr>');
 
     // if (articles.length > 0) {
     //     var $img = $("<img>").attr({
@@ -239,6 +239,8 @@ function processNewsResult(state, text) {
 var monthNames = [
   "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"
 ];
+var dayNames = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+
 
 // function clickArticle(e) {
 //     console.log("clicked!");
@@ -329,6 +331,13 @@ map.on('zoomend', function(){
     if (map.getZoom() < 5) resetMap();
 })
 
+function onStart() {
+    getStateArticles('United States')
+    var today = new Date();
+    $("#date").text(dayNames[today.getDay()] + ", " + monthNames[today.getMonth()] + " " + today.getDate() + ", " + today.getFullYear());
+}
+onStart();
+
 map.whenReady(function(){
     $("#loader").hide();
     $("#info").css("display", "inline-block")
@@ -340,10 +349,10 @@ var legend = L.control({position: 'bottomleft'});
 legend.onAdd = function (map) {
 
     var div = L.DomUtil.create('div', 'legendbox legend'),
-        grades = [0, 250, 500, 750, 1000, 2000, 5000, 10000],
+        grades = [0, 250, 500, 1000, 2000, 4000, 8000],
         labels = [];
 
-    div.innerHTML += '<h5><b>Total Article Count</b></h5><h6 style=\"font-style: italic;\">Last 7 Days</h6>'
+    div.innerHTML += '<h5 style=\"font-size: 13px;\"><b>Total Article Count</b></h5><h6 style=\"font-style: italic; margin-top: 8px; margin-bottom: 6px;\">Last 7 Days</h6>'
 
     // loop through our density intervals and generate a label with a colored square for each interval
     for (var i = 0; i < grades.length; i++) {

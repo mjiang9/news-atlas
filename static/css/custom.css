@@ -2,6 +2,45 @@
     fill: black;
     font-size: 12px;
 }
+.fa-bars {
+    color: white;
+    margin-top: 12px;
+    float: left;
+}
+#date {
+    margin-top: 28px;
+    color: white;
+    font-size: 12px;
+    float: right;
+    margin-right: 12px;
+    display: inline-block;
+}
+
+.navbar1 {
+    background-color: #111;
+}
+.navbar1 .navbar-brand {
+    font-size: 30px;
+    font-weight: bold;
+}
+#header1 {
+    margin-left: calc(50% - 12px);
+    transform: translateX(-50%);
+}
+
+.navbar2 {
+    margin-top: 50px;
+    background-color: #fbfbfb;
+    color: #111;
+    box-shadow: 0px 1px 5px;
+    border: none;
+}
+#header2 {
+    margin-left: 50%;
+    transform: translateX(-50%);
+    color: #222;
+    font-size: 18px;
+}
 
 #container {
     position: relative;
@@ -17,8 +56,9 @@ body.application {
 }
 
 #map {
-    height: calc(100vh - 200px);
-    width: 100%;
+    height: calc(100vh - 270px);
+    margin-top: 50px;
+    width: 65%;
     z-index: 1;
 }
 
@@ -115,17 +155,15 @@ body.application {
 /*News Display box and Articles*/
 #info {
     position: absolute;
-    padding: 6px 6px 6px 12px;
+    padding: 12px 6px 6px 12px;
     font: 14px/16px Arial, Helvetica, sans-serif;
     background: rgba(255,255,255,0.9);
-    box-shadow: 0 0 15px rgba(0,0,0,0.2);
-    border-radius: 5px;
-    width: 26%;
-    max-height: 600px;
-    left: 74%;
-    margin-top: 6px;
+    width: 35%;
+    height: 100%;
+    right: 0px;
+    top: 52px;
     z-index: 2;
-    display: none;
+    display: inline-block;
     overflow: scroll;
 }
 #info h4 {
@@ -136,22 +174,22 @@ body.application {
 }
 #info .article {
     display: inline-block;
-    margin-bottom: 24px;
+    margin-bottom: 34px;
     width: 68%;
 }
 #info .headline {
     color: #555;
     cursor: pointer;
     font-size: 16px;
-    line-height: 21px;
+    line-height: 22px;
     font-weight: bold;
 }
 #info img {
-    width: 27%;
+    width: 90px;
     height: 60px;
     vertical-align: top;
     border-radius: 8px;
-    margin: 4px 4px 14px 7px;
+    margin: 4px 4px 14px 20px;
 }
 #info .headline:hover {
     text-decoration: underline;
@@ -217,15 +255,15 @@ body.application {
     color: #333;
 }
 .legend i {
-    width: 18px;
-    height: 18px;
+    width: 16px;
+    height: 16px;
     float: left;
     margin-right: 8px;
     opacity: 0.7;
 }
 .legendbox {
     padding: 6px 8px;
-    font: 14px/16px Arial, Helvetica, sans-serif;
+    font: 12px/14px Arial, Helvetica, sans-serif;
     background: rgba(255,255,255,0.8);
     box-shadow: 0 0 15px rgba(0,0,0,0.2);
     border-radius: 5px;
@@ -237,7 +275,7 @@ body.application {
 }
 .br18 {
     display: block;
-    margin-bottom: 1px;
+    /*margin-bottom: 1px;*/
 }
 .legendbox h5 {
     line-height: 0.5;

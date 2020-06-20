@@ -6,16 +6,16 @@ import operator
 from geotext import GeoText
 from rake_nltk import Rake
 
-def filter_news(headlines, state, county):
+state_names = ['alabama', 'alaska', 'arizona', 'arkansas', 'california', 'colorado', 'connecticut', 'delaware', 'florida', 'georgia', 'hawaii', 'idaho', 'illinois', 'indiana', 'iowa', 'kansas', 'kentucky', 'louisiana', 'maine', 'maryland', 'massachusetts', 'michigan', 'minnesota', 'mississippi', 'missouri', 'montana', 'nebraska', 'nevada', 'hampshire', 'carolina', 'dakota', 'new hampshire', 'new jersey', 'new mexico', 'new york', 'north carolina', 'north dakota', 'ohio', 'oklahoma', 'oregon', 'pennsylvania', 'rhode island', 'south carolina', 'south dakota', 'tennessee', 'texas', 'utah', 'vermont', 'virginia', 'washington', 'west virginia', 'wisconsin', 'wyoming']
+
+def filter_news_rake(headlines, state, county):
 	n = headlines['totalResults']
 	headlines = sorted(headlines['articles'], key=lambda x: x['title'].lower())
 	# remove duplicate headlines, source names from titles
 	r = Rake(max_length=3)
 	tot = ""
 	for i in range(len(headlines)):
-		tot += headlines[i]['title'].lower() + headlines[i]['description'].lower()
-		if headlines[i]['content']:
-			tot += headlines[i]['content'].lower()
+		tot += headlines[i]['title'].lower()
 	r.extract_keywords_from_text(tot)
 	keywords = r.get_ranked_phrases()
 	print(keywords)
@@ -32,9 +32,11 @@ def overlap(l1, l2):
 
 # updates dictionaries with mapping of word to number of occurrences
 def update_dicts(t, state, county, d, d2, d3):
+	stopw = stopwords.words('english') + [state.lower(), 'n\'t', 'abc', 'ctv', 'news', 'u.s.', 'us', 'covid-19', 'covid', 'coronavirus', 'could', 'would']
 	for w in t:
-		if w in stopwords.words('english') or w in \
-		[state.lower(), county.lower(), 'covid-19', 'coronavirus', 'could']:
+		if w in stopw or w in county.lower() or w in ['north', 'south', 'east', 'west', 'new', 'amid']:
+			continue
+		if state != 'United States' and w in state_names:
 			continue
 		if w in d.keys():
 			d[w] += 1
@@ -43,7 +45,9 @@ def update_dicts(t, state, county, d, d2, d3):
 	bigrams = nltk.bigrams(t)
 	for b in bigrams:
 		w = b[0] + ' ' + b[1]
-		if any(i in ['the', 'coronavirus', 'and', 'in', 'or', 'of', 'that', 'to', state.lower()] for i in b):
+		if any(i in stopw for i in b) or 'county' in b or w in county.lower() or w in [state.lower(), county.lower(), 'united states', 'experts say', 'data shows']:
+			continue
+		if state != 'United States' and w in state_names or b[0] in state_names or b[1] in state_names:
 			continue
 		if w in d2.keys():
 			d2[w] += 1
@@ -52,7 +56,9 @@ def update_dicts(t, state, county, d, d2, d3):
 	trigrams = nltk.trigrams(t)
 	for b in trigrams:
 		w = b[0] + ' ' + b[1] + ' ' + b[2]
-		if 'the' in w or 'coronavirus' in w:
+		if 'the' in w or 'coronavirus' in w or b[0] in stopw or b[2] in stopw or w == county.lower():
+			continue
+		if state != 'United States' and any(i in state_names for i in b):
 			continue
 		if w in d3.keys():
 			d3[w] += 1
@@ -60,7 +66,7 @@ def update_dicts(t, state, county, d, d2, d3):
 			d3[w] = 1
 	return
 
-def filter_news_scratch(headlines, state, county):
+def filter_news(headlines, state, county):
 	# filter out if: duplicate, doesn't contain state/county
 	# sort by: contains trending keywords (unigrams, bigrams, trigrams) - TODO
 	# identify hotspots? search keywords that correspond to locations - GeoText, geopy - TODO
@@ -83,7 +89,8 @@ def filter_news_scratch(headlines, state, county):
 			if county.lower() not in title and headlines[i]['description'] and county.lower() not in headlines[i]['description'].lower():
 				continue
 		elif state and state.lower() not in title and headlines[i]['description'] and state.lower() not in headlines[i]['description'].lower():
-			continue
+			if state != 'United States':
+				continue
 
 		t = word_tokenize(title)
 
@@ -115,23 +122,26 @@ def filter_news_scratch(headlines, state, county):
 		for j in range(i+1, len(top3)):
 			if top3[j] in top_all and overlap(top3[i].split(), top3[j].split()) > 1:
 				top_all.remove(top3[j])
+	top_all = top_all[:4]
 	# remove overlapping bigrams
 	for x in top_all:
 		for y in list(top2):
 			if y in x:
 				top2.remove(y)
 	top_all += top2
+	top_all = top_all[:7]
 	# remove overlapping unigrams
 	top = list(filter(lambda x: x[1] > 1 and x[0] not in flatten(top_all) and x[0][0].isalpha(), \
-		sorted(d.items(), key=lambda x:x[1], reverse=True)))
+		sorted(d.items(), key=lambda x: (x[1], len(x[0])), reverse=True)))
 	print(top)
 	top = list(map(lambda x: x[0], top))
 	
 	top_all += top
 
 	print("\ntop selected keywords: ", top_all)
+	print(len(results), len(top_all))
 		
-	return {'articles': results, 'totalResults': n, 'keywords': top_all[:7]}
+	return {'articles': results, 'totalResults': n, 'keywords': top_all[:10]}
 
 def get_cities(headlines):
 	d = {}

@@ -24,17 +24,17 @@
 var $bottom_trending = $('<div>').attr('id', 'bottom-trending')
 $('#help').before($bottom_trending)
 
-var trending_states = ["California", "New York", "Texas"] // TODO: search popular states instead
+// var trending_states = ["California", "New York", "Texas"] // TODO: search popular states instead
 
-for (let state of trending_states) {
-    fetch('/trending/' + state)
-    .then(function (response) {
-        return response.json();
-    }).then(function (text) {
-        $box = $('<div>').addClass('bottom-trending-box').html(
-            '<h5><b>' + state + ': </b><i>' + text['keywords'][0] + ', ' + text['keywords'][1] + ', ' + text['keywords'][2] + '</i></h5>' 
-            + '<h6>' + text['articles'][0]['title'] + '<br/><br/>' + text['articles'][1]['title'] + '</h6>'
-        )
-        $bottom_trending.append($box)
-    }); 
-}
+// for (let state of trending_states) {
+//     fetch('/trending/' + state)
+//     .then(function (response) {
+//         return response.json();
+//     }).then(function (text) {
+//         $box = $('<div>').addClass('bottom-trending-box').html(
+//             '<h5><b>' + state + ': </b><i>' + text['keywords'][0] + ', ' + text['keywords'][1] + ', ' + text['keywords'][2] + '</i></h5>' 
+//             + '<h6>' + text['articles'][0]['title'] + '<br/><br/>' + text['articles'][1]['title'] + '</h6>'
+//         )
+//         $bottom_trending.append($box)
+//     }); 
+// }

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>COVID News Search</title>
+  <title>News Atlas</title>
   <link rel="stylesheet" href="./static/lib/css//bootstrap.min.css">
   <link rel="stylesheet" href="./static/lib/css/keen-dashboards.css">
   <link rel="stylesheet" href="./static/lib/css/dc.css">
@@ -15,10 +15,21 @@
 
 </head>
 <body class="application">
-  <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+  <div class="navbar navbar-inverse navbar-fixed-top navbar1" role="navigation">
     <div class="container-fluid">
-      <div class="navbar-header">
-        <a class="navbar-brand" href="./">COVID News Search</a>
+      <i class="fa fa-bars fa-2x" aria-hidden="true"></i>
+      <div class="navbar-header" id="header1">
+        <a class="navbar-brand" href="./">News Atlas</a>
+      </div>
+      <div id="date"></div>
+    </div>
+  </div>
+  <div class="navbar navbar-inverse navbar-fixed-top navbar2" role="navigation">
+    <div class="container-fluid">
+      <div class="navbar-header navbar-brand" id="header2">Recent  
+        <b>COVID-19 
+        <!-- <span class="caret"></span> -->
+        </b> Headlines by State and County
       </div>
     </div>
   </div>
@@ -38,25 +49,14 @@
 
   <div id="container">
     <div id="map"></div>
-    <div id="info"><h4>COVID-19 News</h4></div>
+    <div id="info"><h4><b>National</b> COVID-19 News</h4></div>
     <div id="loader">
       <div id="loading-text"><h3>Loading...</h3></div>
       <div id="spinner"></div>
     </div>
-    <div id="help" style="margin-top: -5px; padding: 2px 2px 5px 10px; line-height: 2; display: none"><i>Click a state to view recent COVID-19 news for the state, zoom in/out to switch between county-level and state-level display</i></div>
+    <div id="help" style="margin-top: -5px; padding: 2px 2px 5px 10px; line-height: 2; display: none"><i>Click a state on the map to view recent state-level and county-level news, zoom out to return to national-level display</i></div>
   </div>
 
-  <!-- <div id="container">
-    <div id="how_to_use">
-      <h4>How To Use</h4>
-      <ul>
-        <li>Click a state to view recent COVID-19 news for the state.</li>
-        <li>Click a county to view recent COVID-19 news for the county; zoom out to return to state view.</li>
-        <li>Select a headline on the right side to read more.</li>
-        <li>Use the search bar to add a custom filter, then select one of the filters to apply it.</li>
-      </ul>
-    </div>
-  </div> -->
 
   <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
    integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="

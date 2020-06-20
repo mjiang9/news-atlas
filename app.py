@@ -62,7 +62,7 @@ def getNews(state, county = ''):
     conn.commit()
 
     result = cursor.fetchall()
-    print(result)
+    # print(result)
     if (len(result) == 0 or len(result[0][3]['articles']) == 0):
         print("No entry found in database")
         if (state == 'Washington'):
