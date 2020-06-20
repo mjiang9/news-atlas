@@ -27,7 +27,7 @@ def get_news(state):
 
     # print(result)
     if (state == 'Washington'):
-        query_state = "Washington NOT DC NOT D.C."
+        query_state = '"Washington State" NOT DC NOT D.C.'
     else:
         query_state = state
     weekago = dt.datetime.now() - dt.timedelta(days=7)
