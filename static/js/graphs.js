@@ -1,0 +1,1 @@
+$("#graphs").click(function() {alert("Coming Soon!")})
