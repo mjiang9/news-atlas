@@ -19,3 +19,15 @@ class News(db.Model):
 
     def __repr__(self):
         return '<id {}>'.format(self.id)
+
+class Feedback(db.Model):
+    __tablename__ = 'feedback'
+
+    id = db.Column(db.Integer, primary_key=True)
+    value = db.Column(db.String())
+
+    def __init__(value):
+        self.value = value
+
+    def __repr__(self):
+        return '<id {}>'.format(self.id)

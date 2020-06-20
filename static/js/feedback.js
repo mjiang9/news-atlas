@@ -21,6 +21,7 @@ $close.click(function() {
 })
 
 $submit.click(function() {
+    fetch('/save/' + $input.val()) //This is async? but seems to be working
     $input.hide()
     $submit.hide()
     $confirm_text.show()
