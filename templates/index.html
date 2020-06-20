@@ -10,14 +10,22 @@
   crossorigin=""/>
   <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
   <link rel="stylesheet" href="./static/css/custom.css">
+  <link rel="stylesheet" href="./static/css/feedback.css">
   <link rel="shortcut icon" href="#" />
   <meta charset="utf-8">
 
 </head>
 <body class="application">
   <div class="navbar navbar-inverse navbar-fixed-top navbar1" role="navigation">
-    <div class="container-fluid">
-      <i class="fa fa-bars fa-2x" aria-hidden="true"></i>
+    <div class="container-fluid" id="top-container">
+      <div class="dropdown">
+        <i class="fa fa-bars fa-2x" aria-hidden="true" id="menu"></i>
+        <div class="dropdown-content">
+          <div class="dropdown-item" id="graphs">Graphs</div>
+          <div class="dropdown-item" id="about-us">About us</div>
+          <div class="dropdown-item" id="feedback">Feedback</div>
+        </div>
+      </div>
       <div class="navbar-header" id="header1">
         <a class="navbar-brand" href="./">News Atlas</a>
       </div>
@@ -72,6 +80,9 @@
   <script src="./static/lib/js/us-states.js"></script>
   <script src="./static/lib/js/us-county.js"></script>
   <script src='./static/js/map.js'></script>
+  <script src="./static/js/about-us.js"></script>
+  <script src="./static/js/graphs.js"></script>
+  <script src='./static/js/feedback.js'></script>
   <script src='./static/js/querybar.js'></script>
   <script src='./static/js/trending.js'></script>
 </body>
