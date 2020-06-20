@@ -75,8 +75,17 @@ function movePopup(e) {
     type = (e.target.feature.properties['COUNTY'] != null) ? "county" : "state";
     popup.setContent("<b>" + e.target.feature.properties['NAME'] + (type == "county" ? " County" : "") +
                      "</b><br><i><small>Click to view " + type + " news</small></i>");
-    dx = (type == "county") ? 0.5 : 0.75;
-    popup.setLatLng(L.latLng(e.latlng.lat + dx, e.latlng.lng + dx)).openOn(map);
+    dx = (type == "county" || map.getZoom() > 5) ? 0.5 : 0.75;
+    dy = dx;
+    if (e.latlng.lat + 3 > map.getBounds().getNorth())
+        dy = (type == "county" || map.getZoom() > 5) ? -1 : -3.5;
+    if (e.latlng.lng + 5 < map.getBounds().getWest())
+        dx = (type == "county" || map.getZoom() > 5) ? -2 : -5;
+    if (map.getZoom() > 7) {
+        dx = dx/2;
+        dy = dy/2;
+    }
+    popup.setLatLng(L.latLng(e.latlng.lat + dy, e.latlng.lng + dx)).openOn(map);
 }
 
 function highlightFeature(e) {
@@ -149,7 +158,7 @@ function getCountyArticles(county, state) {
     .then(function (response) {
         return response.json();
     }).then(function (text) {
-        processNewsResult(county, text)
+        processCountyResult(county, text)
     });
 }
 
@@ -160,6 +169,57 @@ function getStateArticles(state) {
     }).then(function (text) {
         processNewsResult(state, text)
     });
+}
+
+function processCountyResult(county, text) {
+    console.log('GET response text:');
+    articles = text["articles"];
+
+    console.log(articles.length + " articles about " + county);
+
+    selected = Storage.get('selected');
+    // articles = filter_news(articles, state, (selected ? selected.tag : null))
+
+    console.log("filtered: " + articles.length + " articles about " + county + (selected ? ", " + selected.tag : ""));
+
+    $("#info").prepend('<div id=\'countyheader\'><h4><b>' +  county + '</b> COVID-19 News<br /></h4><hr>');
+    
+    if (articles.length == 0) {
+        $("#countyheader").append("<div style=\"margin-bottom: 25px;margin-top: 10px;color: dimgray;\">" + "No articles found for " + county + ". </div>");
+    }
+    
+    if (text['keywords'].length) {
+        keywords_text = "<b>Trending:</b> <i>"
+        for (i = 0; i < text["keywords"].length; i++) {
+            keywords_text += text["keywords"][i]
+            if (i != text["keywords"].length - 1) keywords_text += " &middot; "
+            else keywords_text += "</i>"
+        }
+        console.log(keywords_text)
+        var $keywords = $("<div>", {"class": "keywords"}).html(keywords_text);
+        $("#countyheader").append($keywords);
+    }
+
+    var i;
+    for (i = 0; i < articles.length; i++) {
+        var $wrap = $("<div>", {id: "article" + i, "class": "article"});
+        var $div = $("<a class=\"headline\" target=\"_blank\" href=\"" + articles[i].url + "\">").text(articles[i].title);
+        $("#countyheader").append($wrap);
+        $($div).appendTo("#article" + i);
+        var date = new Date(articles[i].publishedAt)
+        var datestr = monthNames[date.getMonth()] + " " + date.getDate() + ", " + date.getFullYear();
+        var $datesource = $("<div>", {"class": "datesource"}).text(datestr + " -- " + articles[i].source.name);
+        $($datesource).appendTo("#article" + i);
+        // $("#info").append($datesource);
+        if (articles[i].urlToImage) {
+            var $img = $("<img>").attr({
+            "src": articles[i].urlToImage });
+            $("#countyheader").append($img);
+        }
+        $("#countyheader").append("<br />");
+    }
+    $('#countyheader').append('<hr></div>')
+
 }
 
 function processNewsResult(state, text) {
@@ -300,6 +360,8 @@ function countyOnClick(e) {
     county = e.target.feature.properties['NAME'] + " County"
     state = Storage.get('cur_state')
     console.log("Clicked " + county + ", " + state)
+    if ($('#countyheader').length)
+        $('#countyheader').remove()
     getCountyArticles(county, state)
     return;
 }

@@ -10,6 +10,7 @@ import os
 import psycopg2
 import datetime as dt
 from filter_news import filter_news, get_cities
+import requests
 
 # Init
 newsapi = NewsApiClient(api_key="c89e608c4ae345e5a03cc1db04983b3a")
@@ -27,13 +28,30 @@ DATABASE_URL = os.environ['DATABASE_URL']
 def index():
     return render_template("index.html")
 
-@app.route("/us")
-def getUS():
-	daysago = dt.datetime.now() - dt.timedelta(days=2)
-	headlines = newsapi.get_everything(q="(coronavirus OR covid) AND (U.S. OR (united states) OR america OR american)", page_size=100, language='en',
-                                       from_param=daysago.strftime("%Y-%m-%d"), sort_by="relevancy", 
-                                       sources="New York Times, CNN, NBC News, The Washington Post, CNBC, Politico, Reuters")
-	return get_cities(headlines)
+def getlink(links):
+    for l in links:
+        if '.gov' in l:
+            return l
+    return links[0]
+
+@app.route("/covidinfo")
+def getCovidInfo():
+    to_state = {'AL': 'Alabama', 'AK': 'Alaska', 'AS': 'American Samoa', 'AZ': 'Arizona', 'AR': 'Arkansas', 'CA': 'California', 'CO': 'Colorado', 'CT': 'Connecticut', 'DE': 'Delaware', 'DC': 'District of Columbia', 'FL': 'Florida', 'GA': 'Georgia', 'GU': 'Guam', 'HI': 'Hawaii', 'ID': 'Idaho', 'IL': 'Illinois', 'IN': 'Indiana', 'IA': 'Iowa', 'KS': 'Kansas', 'KY': 'Kentucky', 'LA': 'Louisiana', 'ME': 'Maine', 'MD': 'Maryland', 'MA': 'Massachusetts', 'MI': 'Michigan', 'MN': 'Minnesota', 'MS': 'Mississippi', 'MO': 'Missouri', 'MT': 'Montana', 'NE': 'Nebraska', 'NV': 'Nevada', 'NH': 'New Hampshire', 'NJ': 'New Jersey', 'NM': 'New Mexico', 'NY': 'New York', 'NC': 'North Carolina', 'ND': 'North Dakota', 'MP': 'Northern Mariana Islands', 'OH': 'Ohio', 'OK': 'Oklahoma', 'OR': 'Oregon', 'PA': 'Pennsylvania', 'PR': 'Puerto Rico', 'RI': 'Rhode Island', 'SC': 'South Carolina', 'SD': 'South Dakota', 'TN': 'Tennessee', 'TX': 'Texas', 'UT': 'Utah', 'VT': 'Vermont', 'VI': 'Virgin Islands', 'VA': 'Virginia', 'WA': 'Washington', 'WV': 'West Virginia', 'WI': 'Wisconsin', 'WY': 'Wyoming'}
+    
+    r = requests.get('https://covidtracking.com/api/states/info')
+    info_json = r.json()
+    info = {x['name']: getlink([x['covid19Site'], x['covid19SiteSecondary'], x['covid19SiteTertiary'], x['covid19SiteOld']]) for x in info_json}
+    
+    r = requests.get('https://covidtracking.com/api/states')
+    counts_json = r.json()
+    counts = {to_state[x['state']]: {'cases': x['positive'], 'deaths': x['death']} for x in counts_json}
+
+    us = requests.get('https://covidtracking.com/api/v1/us/current.json').json()
+    info['USA'] = 'https://www.coronavirus.gov/'
+    counts['USA'] = {'cases': us[0]['positive'], 'deaths': us[0]['deaths']}
+
+    return {'info': info, 'counts': counts}
+
 
 @app.route("/trending/<state>")
 def getTrending(state):
@@ -66,7 +84,7 @@ def getNews(state, county = ''):
     if (len(result) == 0 or len(result[0][3]['articles']) == 0):
         print("No entry found in database")
         if (state == 'Washington'):
-            query_state = "Washington NOT DC NOT D.C."
+            query_state = '"Washington State" NOT DC NOT D.C.'
         else:
             query_state = state
         weekago = dt.datetime.now() - dt.timedelta(days=7)
@@ -89,7 +107,7 @@ def getNews(state, county = ''):
         conn.commit()
     else:
         filtered_news = {'articles': result[0][3]['articles'], 'totalResults': result[0][3]['totalResults'], 'keywords': result[0][4]}
-    
+
     cursor.close()
     conn.close()
     return filtered_news
