@@ -42,19 +42,6 @@
     </div>
   </div>
 
-  <!-- <div id="container">
-    <div id="querybar">
-      <form class="form-inline" id="querybox">
-        <input class="form-control form-control-sm ml-3 w-75" type="text" id="querytext" placeholder="Search" aria-label="Search">
-        <button type="submit" onclick="submitQuery(); return false" id="submit"><i class="fa fa-search"></i></button>
-      </form>
-        <button type="button" id = "tag1" class="float-left btn btn-primary tag" data-toggle="button" aria-pressed="false" autocomplete="off" onclick="updateTag(event); return false">reopen</button>
-        <button type="button" id = "tag2" class="float-left btn btn-primary tag" data-toggle="button" aria-pressed="false" autocomplete="off" onclick="updateTag(event); return false">shutdown</button>
-        <button type="button" id = "tag3" class="float-left btn btn-primary tag" data-toggle="button" aria-pressed="false" autocomplete="off" onclick="updateTag(event); return false">governor</button>
-        <button type="button" id = "tag4" class="float-left btn btn-primary tag" data-toggle="button" aria-pressed="false" autocomplete="off" onclick="updateTag(event); return false">restrictions</button>
-    </div>
-  </div> -->
-
   <div id="container">
     <div id="map"></div>
     <div id="info"><h4><b>National</b> COVID-19 News</h4></div>
@@ -62,9 +49,13 @@
       <div id="loading-text"><h3>Loading...</h3></div>
       <div id="spinner"></div>
     </div>
-    <div id="help" style="margin-top: -5px; padding: 2px 2px 5px 10px; line-height: 2; display: none"><i>Click a state on the map to view recent state- and county-level news, zoom out to return to national-level display</i>
-    <hr>
-    <div id="covinfo"></div></div>
+    <div id="help"><i>Click a state on the map to view recent state- and county-level news, zoom out to return to national-level display</i>
+      <hr style="margin: 3px">
+      <div id="covinfo">
+        <div id="covinfo1"></div>
+        <div id="covinfo2"></div>
+      </div>
+    </div>
   </div>
 
 

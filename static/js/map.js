@@ -222,6 +222,17 @@ function processCountyResult(county, text) {
 
 }
 
+function trimlink(link) {
+    if (link.length < 40) return link;
+    return link.substring(0,40) + "..."
+}
+function trimnum(num) {
+    if (num > 1000000) return Math.round(num/1000000 *100)/100 + "M";
+    if (num > 10000) return Math.round(num/1000 *100)/100 + "K";
+    if (num > 1000) return Math.round(num/1000) + "," + num%1000;
+    return num;
+}
+
 function processNewsResult(state, text) {
     console.log('GET response text:');
     articles = text["articles"];
@@ -270,21 +281,27 @@ function processNewsResult(state, text) {
     us_covlink = text['covinfo']['info']['USA']
 
     helplinks = covid_help_links[state]
-    $("#covinfo").html("<b>US Cases: " + us_cases + ", US Deaths: " + us_deaths + "</b>"+ "<br>");
-    $("#covinfo").append("To learn more: " + us_covlink+ "<br>")
+    $("#covinfo1").html("<b><big>US &#8202; | &#8202; Cases: </b>" + trimnum(us_cases) + "<b> &#8202; Deaths: </b>" + trimnum(us_deaths) + "</big><br>");
+    $("#covinfo1").append("Learn more: <a href=\"" + us_covlink + "\">" + us_covlink+ "</a><br>")
+    $("#covinfo2").html("<b><big>Take Action: </big></b>"+ "<br>")
     if (state == 'United States') {
-        $("#covinfo").append("Take action to help: " + "\<US links here\>")
+        for (i = 0; i < Math.min(3,helplinks.length); i++) {
+            $("#covinfo2").append("<a class='helplink' href=\"" +helplinks[i].link + "\">" + helplinks[i].title + "</a>" + "<br>")
+        }
     }
     else {
         console.log(text['covinfo'])
         state_cases = text['covinfo']['counts'][state]['cases']
         state_deaths = text['covinfo']['counts'][state]['deaths']
         state_covlink = text['covinfo']['info'][state]
-        $("#covinfo").append("State Cases: " + state_cases + ", State Deaths: " + state_deaths + "<br>");
-        $("#covinfo").append("To learn more (state): " + state_covlink+ "<br>")
-        $("#covinfo").append("Take action to help: "+ "<br>")
-        for (i = 0; i < helplinks.length; i++) {
-            $("#covinfo").append(helplinks[i].title + "<br>" + helplinks[i].link+ "<br>")
+        $("#covinfo1").prepend("<b><big>" + state + " &#8202; | &#8202; Cases: </b>" + trimnum(state_cases) + "<b> &#8202; Deaths: </b>" + trimnum(state_deaths) + "</big><br>" +
+            "Learn more: <a href=\"" + state_covlink + "\">" + trimlink(state_covlink) + "</a><br><span style=\"display: block;height: 8px;\"></span>")
+        for (i = 0; i < Math.min(3,helplinks.length); i++) {
+            $("#covinfo2").append("<a class='helplink' href=\"" + helplinks[i].link + "\">" + helplinks[i].title + "</a><br>")
+        }
+        helplinks = covid_help_links['United States']
+        for (i = 0; i < Math.min(3,helplinks.length); i++) {
+            $("#covinfo2").append("<a class='helplink' href=\"" +helplinks[i].link + "\">" + helplinks[i].title + "</a>" + "<br>")
         }
     }    
 }
