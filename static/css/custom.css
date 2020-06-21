@@ -332,9 +332,10 @@ body.application {
     display: inline-block;
     height: 138px;
     background: white;
-    padding: 5px;
+    padding: 5px 8px;
     vertical-align: top;
     margin-right: 0.5%;
+    overflow: scroll;
 }
 #covinfo2 {
     width: 49%;
@@ -342,5 +343,5 @@ body.application {
     height: 138px;
     background: white;
     overflow: scroll;
-    padding: 5px;
+    padding: 5px 8px;
 }

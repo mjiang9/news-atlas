@@ -71,25 +71,34 @@ def getCovidInfo(state):
         return {'info': {'USA': d_all['info']['USA']}, 'counts': {'USA': d_all['counts']['USA']}}
     return {'info': {state: d_all['info'][state], 'USA': d_all['info']['USA']}, 'counts': {state: d_all['counts'][state], 'USA': d_all['counts']['USA']}}
 
-# @app.route("/covidhelp/<state>")
-# def getCovidHelp(state):
-#     """Get donation links from google, limited requests -> should store into db"""
-#     cx = '004593184947520844685:vitre6m1avi'
-#     query = f'donate help coronavirus relief {state}'
-#     u = f'https://www.googleapis.com/customsearch/v1?key={key}&cx={cx}&q={query}'
-#     r = requests.get(u)
-#     results = r.json()
-#     links = []
-#     orgs = set()
-#     for result in results['items']:
-#         if 'news' in result['link'] or 'https' not in result['link'] or 'www' not in result['displayLink']:
-#             continue
-#         if result['displayLink'] in orgs:
-#             continue
-#         links.append({'title': result['title'], 'link': result['link'], 'snippet': result['snippet']})
-#         orgs.add(result['displayLink'])
-#     print(f"got {len(links)} links")
-#     return {state: links[:10]}
+def getCovidHelp(state):
+    """Get donation links from google, limited requests -> should store into db"""
+    key = 0
+    cx = '004593184947520844685:vitre6m1avi'
+    query = f'\"{state}\" coronavirus relief donate'
+    u = f'https://www.googleapis.com/customsearch/v1?key={key}&cx={cx}&q={query}'
+    r = requests.get(u)
+    results = r.json()
+    links = []
+    orgs = set()
+    for result in results['items']:
+        if 'news' in result['link'] or 'https' not in result['link'] or 'www' not in result['displayLink']:
+            continue
+        if result['displayLink'] in orgs or 'nytimes' in result['link'] or any(i in result['snippet'] for i in ['CEO', 'Feeding America', 'article', 'owner', 'sport', 'team']):
+            continue
+        links.append({'title': result['title'], 'link': result['link']})
+        orgs.add(result['displayLink'])
+    best = list(filter(lambda x: state in x['title'], links))
+    other = list(filter(lambda x: state not in x['title'], links))
+    print(f"got {len(links)} links")
+    return best + other
+
+def getCovidHelpAll():
+    d = {}
+    to_state = {'AL': 'Alabama', 'AK': 'Alaska', 'AS': 'American Samoa', 'AZ': 'Arizona', 'AR': 'Arkansas', 'CA': 'California', 'CO': 'Colorado', 'CT': 'Connecticut', 'DE': 'Delaware', 'DC': 'District of Columbia', 'FL': 'Florida', 'GA': 'Georgia', 'GU': 'Guam', 'HI': 'Hawaii', 'ID': 'Idaho', 'IL': 'Illinois', 'IN': 'Indiana', 'IA': 'Iowa', 'KS': 'Kansas', 'KY': 'Kentucky', 'LA': 'Louisiana', 'ME': 'Maine', 'MD': 'Maryland', 'MA': 'Massachusetts', 'MI': 'Michigan', 'MN': 'Minnesota', 'MS': 'Mississippi', 'MO': 'Missouri', 'MT': 'Montana', 'NE': 'Nebraska', 'NV': 'Nevada', 'NH': 'New Hampshire', 'NJ': 'New Jersey', 'NM': 'New Mexico', 'NY': 'New York', 'NC': 'North Carolina', 'ND': 'North Dakota', 'MP': 'Northern Mariana Islands', 'OH': 'Ohio', 'OK': 'Oklahoma', 'OR': 'Oregon', 'PA': 'Pennsylvania', 'PR': 'Puerto Rico', 'RI': 'Rhode Island', 'SC': 'South Carolina', 'SD': 'South Dakota', 'TN': 'Tennessee', 'TX': 'Texas', 'UT': 'Utah', 'VT': 'Vermont', 'VI': 'Virgin Islands', 'VA': 'Virginia', 'WA': 'Washington', 'WV': 'West Virginia', 'WI': 'Wisconsin', 'WY': 'Wyoming'}
+    for state in to_state.values():
+        d[state] = getCovidHelp(state)
+    return d
 
 @app.route("/trending/<state>")
 def getTrending(state):
@@ -118,7 +127,6 @@ def getNews(state, county = ''):
     conn.commit()
 
     result = cursor.fetchall()
-    # print(result)
     if (len(result) == 0 or len(result[0][3]['articles']) == 0):
         print("No entry found in database")
         if (state == 'Washington'):
@@ -134,12 +142,12 @@ def getNews(state, county = ''):
         # no record existed 
         if (len(result) == 0):
             query = """ INSERT INTO news (state, county, result, keywords) VALUES (%s,%s,%s,%s) """
-            record = (state, county, json.dumps(headlines), filtered_news['keywords'])
+            record = (state, county, json.dumps({'totalResults': filtered_news['totalResults'], 'articles': filtered_news['articles']}), filtered_news['keywords'])
             print("Row created")
         # record was empty
         else:
             query = """ UPDATE news SET result = %s, keywords = %s WHERE state = %s AND county = %s """
-            record = (json.dumps(headlines), state, county, filtered_news['keywords'])
+            record = (json.dumps({'totalResults': filtered_news['totalResults'], 'articles': filtered_news['articles']}), state, county, filtered_news['keywords'])
             print("Row updated")
         cursor.execute(query, record) 
         conn.commit()

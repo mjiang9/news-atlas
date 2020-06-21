@@ -46,8 +46,6 @@ function numArticles(state) {
 
 function style(feature) {
     if (feature.properties['COUNTY'] != null) {
-        // console.log(feature.properties['NAME'])
-        // counts = countdict[feature.properties['NAME']];
         count = 0
     } else {
         counts = Storage.get('counts')
@@ -172,13 +170,8 @@ function getStateArticles(state) {
 }
 
 function processCountyResult(county, text) {
-    console.log('GET response text:');
     articles = text["articles"];
-
-    console.log(articles.length + " articles about " + county);
-
     selected = Storage.get('selected');
-    // articles = filter_news(articles, state, (selected ? selected.tag : null))
 
     console.log("filtered: " + articles.length + " articles about " + county + (selected ? ", " + selected.tag : ""));
 
@@ -195,7 +188,6 @@ function processCountyResult(county, text) {
             if (i != text["keywords"].length - 1) keywords_text += " &middot; "
             else keywords_text += "</i>"
         }
-        console.log(keywords_text)
         var $keywords = $("<div>", {"class": "keywords"}).html(keywords_text);
         $("#countyheader").append($keywords);
     }
@@ -222,25 +214,23 @@ function processCountyResult(county, text) {
 
 }
 
-function trimlink(link) {
-    if (link.length < 40) return link;
-    return link.substring(0,40) + "..."
+function trimlink(link, k) {
+    if (link.length < k) return link;
+    return link.substring(0,k) + "..."
 }
 function trimnum(num) {
     if (num > 1000000) return Math.round(num/1000000 *100)/100 + "M";
     if (num > 10000) return Math.round(num/1000 *100)/100 + "K";
-    if (num > 1000) return Math.round(num/1000) + "," + num%1000;
+    if (num > 1000) {
+        if (num%1000 < 100) return Math.round(num/1000) + ",0" + num%1000;
+        return Math.round(num/1000) + "," + num%1000;
+    }
     return num;
 }
 
 function processNewsResult(state, text) {
-    console.log('GET response text:');
     articles = text["articles"];
-
-    console.log(articles.length + " articles about " + state);
-
     selected = Storage.get('selected');
-    // articles = filter_news(articles, state, (selected ? selected.tag : null))
 
     console.log("filtered: " + articles.length + " articles about " + state + (selected ? ", " + selected.tag : ""));
 
@@ -253,7 +243,6 @@ function processNewsResult(state, text) {
             if (i != text["keywords"].length - 1) keywords_text += " &middot; "
             else keywords_text += "</i>"
         }
-        console.log(keywords_text)
         var $keywords = $("<div>", {"class": "keywords"}).html(keywords_text);
         $("#info").append($keywords);
     }
@@ -290,18 +279,17 @@ function processNewsResult(state, text) {
         }
     }
     else {
-        console.log(text['covinfo'])
         state_cases = text['covinfo']['counts'][state]['cases']
         state_deaths = text['covinfo']['counts'][state]['deaths']
         state_covlink = text['covinfo']['info'][state]
         $("#covinfo1").prepend("<b><big>" + state + " &#8202; | &#8202; Cases: </b>" + trimnum(state_cases) + "<b> &#8202; Deaths: </b>" + trimnum(state_deaths) + "</big><br>" +
-            "Learn more: <a href=\"" + state_covlink + "\">" + trimlink(state_covlink) + "</a><br><span style=\"display: block;height: 8px;\"></span>")
+            "Learn more: <a href=\"" + state_covlink + "\">" + trimlink(state_covlink, 40) + "</a><br><span style=\"display: block;height: 8px;\"></span>")
         for (i = 0; i < Math.min(3,helplinks.length); i++) {
-            $("#covinfo2").append("<a class='helplink' href=\"" + helplinks[i].link + "\">" + helplinks[i].title + "</a><br>")
+            $("#covinfo2").append("<a class='helplink' href=\"" + helplinks[i].link + "\">" + trimlink(helplinks[i].title, 55) + "</a><br>")
         }
         helplinks = covid_help_links['United States']
         for (i = 0; i < Math.min(3,helplinks.length); i++) {
-            $("#covinfo2").append("<a class='helplink' href=\"" +helplinks[i].link + "\">" + helplinks[i].title + "</a>" + "<br>")
+            $("#covinfo2").append("<a class='helplink' href=\"" +helplinks[i].link + "\">" + trimlink(helplinks[i].title, 55) + "</a>" + "<br>")
         }
     }    
 }

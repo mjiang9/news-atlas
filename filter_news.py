@@ -83,7 +83,7 @@ def filter_news(headlines, state, county):
 
 		# filter out if doesn't contain name of county or state
 		if county:
-			if county.lower() not in title and headlines[i]['description'] and county.lower() not in headlines[i]['description'].lower():
+			if county.lower() not in title and headlines[i]['description'] and county.lower() not in headlines[i]['description'].lower() and county[:len(county) - len("County ")].lower() not in headlines[i]['title'].lower():
 				continue
 		elif state and state.lower() not in title and headlines[i]['description'] and state.lower() not in headlines[i]['description'].lower():
 			if state != 'United States':
