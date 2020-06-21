@@ -45,7 +45,8 @@ def saveInput(input):
     return ""
 
 @app.route("/covidinfo")
-def getCovidInfo():
+def getCovidInfoAll():
+    """unlimited requests I think"""
     to_state = {'AL': 'Alabama', 'AK': 'Alaska', 'AS': 'American Samoa', 'AZ': 'Arizona', 'AR': 'Arkansas', 'CA': 'California', 'CO': 'Colorado', 'CT': 'Connecticut', 'DE': 'Delaware', 'DC': 'District of Columbia', 'FL': 'Florida', 'GA': 'Georgia', 'GU': 'Guam', 'HI': 'Hawaii', 'ID': 'Idaho', 'IL': 'Illinois', 'IN': 'Indiana', 'IA': 'Iowa', 'KS': 'Kansas', 'KY': 'Kentucky', 'LA': 'Louisiana', 'ME': 'Maine', 'MD': 'Maryland', 'MA': 'Massachusetts', 'MI': 'Michigan', 'MN': 'Minnesota', 'MS': 'Mississippi', 'MO': 'Missouri', 'MT': 'Montana', 'NE': 'Nebraska', 'NV': 'Nevada', 'NH': 'New Hampshire', 'NJ': 'New Jersey', 'NM': 'New Mexico', 'NY': 'New York', 'NC': 'North Carolina', 'ND': 'North Dakota', 'MP': 'Northern Mariana Islands', 'OH': 'Ohio', 'OK': 'Oklahoma', 'OR': 'Oregon', 'PA': 'Pennsylvania', 'PR': 'Puerto Rico', 'RI': 'Rhode Island', 'SC': 'South Carolina', 'SD': 'South Dakota', 'TN': 'Tennessee', 'TX': 'Texas', 'UT': 'Utah', 'VT': 'Vermont', 'VI': 'Virgin Islands', 'VA': 'Virginia', 'WA': 'Washington', 'WV': 'West Virginia', 'WI': 'Wisconsin', 'WY': 'Wyoming'}
     
     r = requests.get('https://covidtracking.com/api/states/info')
@@ -63,30 +64,32 @@ def getCovidInfo():
     print(f"got COVID info for {len(info)} states and counts for {len(counts)} states")
     return {'info': info, 'counts': counts}
 
-def org(link):
+@app.route("/covidinfo/<state>")
+def getCovidInfo(state):
+    d_all = getCovidInfoAll()
+    if state == 'United States':
+        return {'info': {'USA': d_all['info']['USA']}, 'counts': {'USA': d_all['counts']['USA']}}
+    return {'info': {state: d_all['info'][state], 'USA': d_all['info']['USA']}, 'counts': {state: d_all['counts'][state], 'USA': d_all['counts']['USA']}}
 
-    return
-
-@app.route("/covidhelp/<state>")
-def getCovidHelp(state):
-    """Get donation links from google"""
-    key = 'AIzaSyBVsT8rVffEkfjunpOhNAR3ivGAzgpqZZw'
-    cx = '004593184947520844685:vitre6m1avi'
-    query = f'donate help coronavirus relief {state}'
-    u = f'https://www.googleapis.com/customsearch/v1?key={key}&cx={cx}&q={query}'
-    r = requests.get(u)
-    results = r.json()
-    links = []
-    orgs = set()
-    for result in results['items']:
-        if 'news' in result['link'] or 'https' not in result['link'] or 'www' not in result['displayLink']:
-            continue
-        if org(result['displayLink']) in orgs:
-            continue
-        links.append({'title': result['title'], 'link': result['link'], 'snippet': result['snippet']})
-        orgs.add(result['displayLink'])
-    print(f"got {len(links)} links")
-    return {'links': links[:10]}
+# @app.route("/covidhelp/<state>")
+# def getCovidHelp(state):
+#     """Get donation links from google, limited requests -> should store into db"""
+#     cx = '004593184947520844685:vitre6m1avi'
+#     query = f'donate help coronavirus relief {state}'
+#     u = f'https://www.googleapis.com/customsearch/v1?key={key}&cx={cx}&q={query}'
+#     r = requests.get(u)
+#     results = r.json()
+#     links = []
+#     orgs = set()
+#     for result in results['items']:
+#         if 'news' in result['link'] or 'https' not in result['link'] or 'www' not in result['displayLink']:
+#             continue
+#         if result['displayLink'] in orgs:
+#             continue
+#         links.append({'title': result['title'], 'link': result['link'], 'snippet': result['snippet']})
+#         orgs.add(result['displayLink'])
+#     print(f"got {len(links)} links")
+#     return {state: links[:10]}
 
 @app.route("/trending/<state>")
 def getTrending(state):
@@ -142,7 +145,7 @@ def getNews(state, county = ''):
         conn.commit()
     else:
         filtered_news = {'articles': result[0][3]['articles'], 'totalResults': result[0][3]['totalResults'], 'keywords': result[0][4]}
-
+    filtered_news['covinfo'] = getCovidInfo(state)
     cursor.close()
     conn.close()
     return filtered_news

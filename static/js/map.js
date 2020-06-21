@@ -265,6 +265,28 @@ function processNewsResult(state, text) {
         }
         $("#info").append("<br />");
     }
+    us_cases = text['covinfo']['counts']['USA']['cases']
+    us_deaths = text['covinfo']['counts']['USA']['deaths']
+    us_covlink = text['covinfo']['info']['USA']
+
+    helplinks = covid_help_links[state]
+    $("#covinfo").html("<b>US Cases: " + us_cases + ", US Deaths: " + us_deaths + "</b>"+ "<br>");
+    $("#covinfo").append("To learn more: " + us_covlink+ "<br>")
+    if (state == 'United States') {
+        $("#covinfo").append("Take action to help: " + "\<US links here\>")
+    }
+    else {
+        console.log(text['covinfo'])
+        state_cases = text['covinfo']['counts'][state]['cases']
+        state_deaths = text['covinfo']['counts'][state]['deaths']
+        state_covlink = text['covinfo']['info'][state]
+        $("#covinfo").append("State Cases: " + state_cases + ", State Deaths: " + state_deaths + "<br>");
+        $("#covinfo").append("To learn more (state): " + state_covlink+ "<br>")
+        $("#covinfo").append("Take action to help: "+ "<br>")
+        for (i = 0; i < helplinks.length; i++) {
+            $("#covinfo").append(helplinks[i].title + "<br>" + helplinks[i].link+ "<br>")
+        }
+    }    
 }
 
 var monthNames = [

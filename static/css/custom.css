@@ -25,7 +25,7 @@
     font-weight: bold;
 }
 #header1 {
-    margin-left: calc(50% - 12px);
+    margin-left: calc(50% - 27px);
     transform: translateX(-50%);
 }
 
