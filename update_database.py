@@ -36,7 +36,7 @@ def get_news(state):
                                     from_param=weekago.strftime("%Y-%m-%d"), sort_by="relevancy")
     filtered_news = filter_news(headlines, state, '')
     query = """ INSERT INTO news (state, county, result, keywords) VALUES (%s,%s,%s,%s) """
-    record = (state, '', json.dumps(headlines), filtered_news['keywords'])
+    record = (state, '', json.dumps({'totalResults': filtered_news['totalResults'], 'articles': filtered_news['articles']}), filtered_news['keywords'])
     cursor.execute(query, record)
     conn.commit()
 

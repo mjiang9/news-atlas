@@ -1,1 +1,0 @@
-$("#about-us").click(function() {alert("Coming Soon!")})
