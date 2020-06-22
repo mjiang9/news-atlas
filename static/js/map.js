@@ -275,7 +275,7 @@ function processNewsResult(state, text) {
     $("#covinfo2").html("<b><big>Take Action: </big></b>"+ "<br>")
     if (state == 'United States') {
         for (i = 0; i < Math.min(3,helplinks.length); i++) {
-            $("#covinfo2").append("<a class='helplink' href=\"" +helplinks[i].link + "\">" + helplinks[i].title + "</a>" + "<br>")
+            $("#covinfo2").append("<div class='link-div'><a class='helplink' href=\"" +helplinks[i].link + "\">" + helplinks[i].title + "</a></div>")
         }
     }
     else {
@@ -283,13 +283,13 @@ function processNewsResult(state, text) {
         state_deaths = text['covinfo']['counts'][state]['deaths']
         state_covlink = text['covinfo']['info'][state]
         $("#covinfo1").prepend("<b><big>" + state + " &#8202; | &#8202; Cases: </b>" + trimnum(state_cases) + "<b> &#8202; Deaths: </b>" + trimnum(state_deaths) + "</big><br>" +
-            "Learn more: <a href=\"" + state_covlink + "\">" + trimlink(state_covlink, 40) + "</a><br><span style=\"display: block;height: 8px;\"></span>")
+            "<div class='link-div'>Learn more: <a href=\"" + state_covlink + "\">" + state_covlink + "</a></div><span style=\"display: block;height: 8px;\"></span>")
         for (i = 0; i < Math.min(3,helplinks.length); i++) {
-            $("#covinfo2").append("<a class='helplink' href=\"" + helplinks[i].link + "\">" + trimlink(helplinks[i].title, 55) + "</a><br>")
+            $("#covinfo2").append("<div class='link-div'><a class='helplink' href=\"" + helplinks[i].link + "\">" + helplinks[i].title + "</a></div>")
         }
         helplinks = covid_help_links['United States']
         for (i = 0; i < Math.min(3,helplinks.length); i++) {
-            $("#covinfo2").append("<a class='helplink' href=\"" +helplinks[i].link + "\">" + trimlink(helplinks[i].title, 55) + "</a>" + "<br>")
+            $("#covinfo2").append("<div class='link-div'><a class='helplink' href=\"" +helplinks[i].link + "\">" + helplinks[i].title + "</a></div>")
         }
     }    
 }

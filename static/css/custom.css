@@ -80,6 +80,7 @@
     transform: translateX(-50%);
     color: #222;
     font-size: 18px;
+    white-space: nowrap;
 }
 
 #container {
@@ -326,22 +327,29 @@ body.application {
     width: 65%; 
     padding: 2px 2px 5px 10px; 
     line-height: 2;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
+
+#covinfo1, #covinfo2 {
+    width: 49%;
+    display: inline-block;
+    height: 136px;
+    background: white;
+    padding: 5px 8px;
+    overflow: scroll;
+    overflow-x: hidden;
+}
+
 #covinfo1 {
-    width: 49%;
-    display: inline-block;
-    height: 138px;
-    background: white;
-    padding: 5px 8px;
     vertical-align: top;
-    margin-right: 0.5%;
-    overflow: scroll;
+    margin-right: 0.5%;   
+    white-space: normal; 
 }
-#covinfo2 {
-    width: 49%;
-    display: inline-block;
-    height: 138px;
-    background: white;
-    overflow: scroll;
-    padding: 5px 8px;
+
+.link-div {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
 }
