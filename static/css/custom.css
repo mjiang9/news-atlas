@@ -353,3 +353,15 @@ body.application {
     white-space: nowrap;
     overflow: hidden;
 }
+
+.plot-box {
+    background-color: #fefefe;
+    position: absolute;
+    left: 50%;
+    top: 15%;
+    transform: translateX(-50%);
+    border: 1px soliid #888;
+    width: 550px;
+    max-height: 800px;
+    text-align: center;
+}

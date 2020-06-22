@@ -228,6 +228,34 @@ function trimnum(num) {
     return num;
 }
 
+function getCovidInfoDiv(location, cases, deaths, link) {
+    $covid_info = $("<div>");
+    $graph = $("<div>").attr("id", location + " Graph").css("display", "inline-block");
+    $location = $("<div>").html("<h4><b>&#8202; &#183; &#8202;" + location + "</b></h4>").css({
+        "top": "-10px",
+        "position": "relative",
+        "display": "inline-block"
+    })
+    $cases_and_death = $("<div>").html("<i><big>Cases: </i>" + trimnum(cases) + "<i> &#8202; Deaths: </i>" + trimnum(deaths) + "</big><br>").css({
+        "top": "-10px",
+        "position": "relative",
+    })
+    $link = $("<div>").html("Learn more: <a href=\"" + link + "\">" + link+ "</a><br>").addClass("link-div").css({
+        "top": "-10px",
+        "position": "relative",
+    })
+
+    $graph.click(function() {plotBigGraph(location)})
+
+    $covid_info.append($graph, $location, $cases_and_death, $link)
+    $("#covinfo1").append($covid_info)
+    plotSmallGraph(location, $graph.attr('id'))
+    
+    $graph.on('plotly_afterplot', function() {
+        $(".nsewdrag").css("cursor", "pointer")
+    })
+}
+
 function processNewsResult(state, text) {
     articles = text["articles"];
     selected = Storage.get('selected');
@@ -270,8 +298,9 @@ function processNewsResult(state, text) {
     us_covlink = text['covinfo']['info']['USA']
 
     helplinks = covid_help_links[state]
-    $("#covinfo1").html("<b><big>US &#8202; | &#8202; Cases: </b>" + trimnum(us_cases) + "<b> &#8202; Deaths: </b>" + trimnum(us_deaths) + "</big><br>");
-    $("#covinfo1").append("Learn more: <a href=\"" + us_covlink + "\">" + us_covlink+ "</a><br>")
+    $("#covinfo1").empty()
+    getCovidInfoDiv("United States", us_cases, us_deaths, us_covlink)
+
     $("#covinfo2").html("<b><big>Take Action: </big></b>"+ "<br>")
     if (state == 'United States') {
         for (i = 0; i < Math.min(3,helplinks.length); i++) {
@@ -282,8 +311,7 @@ function processNewsResult(state, text) {
         state_cases = text['covinfo']['counts'][state]['cases']
         state_deaths = text['covinfo']['counts'][state]['deaths']
         state_covlink = text['covinfo']['info'][state]
-        $("#covinfo1").prepend("<b><big>" + state + " &#8202; | &#8202; Cases: </b>" + trimnum(state_cases) + "<b> &#8202; Deaths: </b>" + trimnum(state_deaths) + "</big><br>" +
-            "<div class='link-div'>Learn more: <a href=\"" + state_covlink + "\">" + state_covlink + "</a></div><span style=\"display: block;height: 8px;\"></span>")
+        getCovidInfoDiv(state, state_cases, state_deaths, state_covlink)
         for (i = 0; i < Math.min(3,helplinks.length); i++) {
             $("#covinfo2").append("<div class='link-div'><a class='helplink' target=\"_blank\" href=\"" + helplinks[i].link + "\">" + helplinks[i].title + "</a></div>")
         }
@@ -292,7 +320,6 @@ function processNewsResult(state, text) {
             $("#covinfo2").append("<div class='link-div'><a class='helplink' target=\"_blank\" href=\"" +helplinks[i].link + "\">" + helplinks[i].title + "</a></div>")
         }
     }  
-    plotState(state)  
 }
 
 var monthNames = [
@@ -398,7 +425,7 @@ legend.onAdd = function (map) {
 
 legend.addTo(map);
 
-function plotState(state) {
+function plotSmallGraph(state, div) {
     fetch('/covidhistory/' + state)
     .then(function (response) {
         return response.json();
@@ -406,11 +433,103 @@ function plotState(state) {
         var trace1 = {
           x: text['dates'],
           y: text['cases'],
-          type: 'scatter'
+          mode: 'scatter'
         };
 
         var data = [trace1];
 
-        Plotly.newPlot('covinfo1', data);
+        var layout = {
+            width: 35,
+            height: 35,
+            margin: {
+                l: 2,
+                r: 0,
+                b: 2,
+                t: 0,
+                pad: 0
+            },
+            xaxis: {
+                showgrid: false,
+                showline: true,
+                showticklabels: false,
+                zeroline: false,
+                linewidth: 2
+            },
+            yaxis: {
+                showgrid: false,
+                showline: true,
+                showticklabels: false,
+                zeroline: false,
+                linewidth: 2
+            }
+        }
+        Plotly.newPlot(div, data, layout, {displayModeBar: false});
+    });
+}
+
+function dateToString(date) {
+    return date.toString().substring(4, 6) + "/" + date.toString().substring(6, 8)
+}
+
+function plotBigGraph(state) {
+    fetch('/covidhistory/' + state)
+    .then(function (response) {
+        return response.json();
+    }).then(function (text) {
+        var trace1 = {
+          x: text['dates'].map(x => dateToString(x)),
+          y: text['cases'],
+          mode: 'scatter'
+        };
+
+        var data = [trace1];
+
+        var layout = {
+            title: {
+                text: 'Number of Cases in ' + state,
+                x: 0.55
+            },
+            width: 500,
+            height: 500,
+            margin: {
+                l: 55,
+                r: 15,
+                b: 40,
+                t: 80,
+                pad: 0
+            },
+            xaxis: {
+                showgrid: false,
+                showline: true,
+                showticklabels: true,
+                tick0: 0,
+                dtick: 25,
+                zeroline: false,
+                linewidth: 2
+            },
+            yaxis: {
+                showgrid: false,
+                showline: true,
+                showticklabels: true,
+                zeroline: false,
+                linewidth: 2
+            }
+        }
+
+        $plot_modal = $("<div>").addClass("modal")
+        $plot_box = $("<div>").addClass("plot-box")
+        $big_plot = $("<div>").attr("id", "Big " + state + " Plot")
+        $close_plot = $("<span>").html("&times;").addClass("close");
+        
+        $plot_box.append($close_plot, $big_plot)
+        $plot_modal.append($plot_box)
+        $plot_modal.appendTo(document.body)
+
+        $close_plot.click(function() {
+            $plot_modal.empty()
+            $plot_modal.remove()
+        })
+ 
+        Plotly.newPlot($big_plot.attr("id"), data, layout);
     });
 }
