@@ -275,7 +275,7 @@ function processNewsResult(state, text) {
     $("#covinfo2").html("<b><big>Take Action: </big></b>"+ "<br>")
     if (state == 'United States') {
         for (i = 0; i < Math.min(3,helplinks.length); i++) {
-            $("#covinfo2").append("<div class='link-div'><a class='helplink' href=\"" +helplinks[i].link + "\">" + helplinks[i].title + "</a></div>")
+            $("#covinfo2").append("<div class='link-div'><a class='helplink' target=\"_blank\" href=\"" +helplinks[i].link + "\">" + helplinks[i].title + "</a></div>")
         }
     }
     else {
@@ -285,13 +285,14 @@ function processNewsResult(state, text) {
         $("#covinfo1").prepend("<b><big>" + state + " &#8202; | &#8202; Cases: </b>" + trimnum(state_cases) + "<b> &#8202; Deaths: </b>" + trimnum(state_deaths) + "</big><br>" +
             "<div class='link-div'>Learn more: <a href=\"" + state_covlink + "\">" + state_covlink + "</a></div><span style=\"display: block;height: 8px;\"></span>")
         for (i = 0; i < Math.min(3,helplinks.length); i++) {
-            $("#covinfo2").append("<div class='link-div'><a class='helplink' href=\"" + helplinks[i].link + "\">" + helplinks[i].title + "</a></div>")
+            $("#covinfo2").append("<div class='link-div'><a class='helplink' target=\"_blank\" href=\"" + helplinks[i].link + "\">" + helplinks[i].title + "</a></div>")
         }
         helplinks = covid_help_links['United States']
         for (i = 0; i < Math.min(3,helplinks.length); i++) {
-            $("#covinfo2").append("<div class='link-div'><a class='helplink' href=\"" +helplinks[i].link + "\">" + helplinks[i].title + "</a></div>")
+            $("#covinfo2").append("<div class='link-div'><a class='helplink' target=\"_blank\" href=\"" +helplinks[i].link + "\">" + helplinks[i].title + "</a></div>")
         }
-    }    
+    }  
+    plotState(state)  
 }
 
 var monthNames = [
@@ -396,3 +397,20 @@ legend.onAdd = function (map) {
 };
 
 legend.addTo(map);
+
+function plotState(state) {
+    fetch('/covidhistory/' + state)
+    .then(function (response) {
+        return response.json();
+    }).then(function (text) {
+        var trace1 = {
+          x: text['dates'],
+          y: text['cases'],
+          type: 'scatter'
+        };
+
+        var data = [trace1];
+
+        Plotly.newPlot('covinfo1', data);
+    });
+}

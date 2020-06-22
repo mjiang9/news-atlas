@@ -151,7 +151,6 @@ def getStateNews(state):
 
 @app.route("/news/<state>/<county>")
 def getNews(state, county = ''):
-    print(getCovidHistory(state))
     print(f"state to query: {state}, county to query: {county}")  
     conn = psycopg2.connect(DATABASE_URL, sslmode='require')
     cursor = conn.cursor()
