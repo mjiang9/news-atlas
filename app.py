@@ -24,6 +24,8 @@ db = SQLAlchemy(app)
 
 DATABASE_URL = os.environ['DATABASE_URL']
 
+from_state = {'Alabama': 'al', 'Alaska': 'ak', 'American Samoa': 'as', 'Arizona': 'az', 'Arkansas': 'ar', 'California': 'ca', 'Colorado': 'co', 'Connecticut': 'ct', 'Delaware': 'de', 'District of Columbia': 'dc', 'Florida': 'fl', 'Georgia': 'ga', 'Guam': 'gu', 'Hawaii': 'hi', 'Idaho': 'id', 'Illinois': 'il', 'Indiana': 'in', 'Iowa': 'ia', 'Kansas': 'ks', 'Kentucky': 'ky', 'Louisiana': 'la', 'Maine': 'me', 'Maryland': 'md', 'Massachusetts': 'ma', 'Michigan': 'mi', 'Minnesota': 'mn', 'Mississippi': 'ms', 'Missouri': 'mo', 'Montana': 'mt', 'Nebraska': 'ne', 'Nevada': 'nv', 'New Hampshire': 'nh', 'New Jersey': 'nj', 'New Mexico': 'nm', 'New York': 'ny', 'North Carolina': 'nc', 'North Dakota': 'nd', 'Northern Mariana Islands': 'mp', 'Ohio': 'oh', 'Oklahoma': 'ok', 'Oregon': 'or', 'Pennsylvania': 'pa', 'Puerto Rico': 'pr', 'Rhode Island': 'ri', 'South Carolina': 'sc', 'South Dakota': 'sd', 'Tennessee': 'tn', 'Texas': 'tx', 'Utah': 'ut', 'Vermont': 'vt', 'Virgin Islands': 'vi', 'Virginia': 'va', 'Washington': 'wa', 'West Virginia': 'wv', 'Wisconsin': 'wi', 'Wyoming': 'wy'}
+
 @app.route("/")
 def index():
     return render_template("index.html")
@@ -66,10 +68,37 @@ def getCovidInfoAll():
 
 @app.route("/covidinfo/<state>")
 def getCovidInfo(state):
-    d_all = getCovidInfoAll()
+    info, counts = {}, {}
+    us = requests.get('https://covidtracking.com/api/v1/us/current.json').json()
+    info['USA'] = 'https://www.coronavirus.gov/'
+    counts['USA'] = {'cases': us[0]['positive'], 'deaths': us[0]['death']}
+
     if state == 'United States':
-        return {'info': {'USA': d_all['info']['USA']}, 'counts': {'USA': d_all['counts']['USA']}}
-    return {'info': {state: d_all['info'][state], 'USA': d_all['info']['USA']}, 'counts': {state: d_all['counts'][state], 'USA': d_all['counts']['USA']}}
+        return {'info': info, 'counts': counts}
+
+    r = requests.get(f'https://covidtracking.com/api/v1/states/{from_state[state]}/info.json')
+    x = r.json()
+    info[state] = getlink([x['covid19Site'], x['covid19SiteSecondary'], x['covid19SiteTertiary'], x['covid19SiteOld']])
+    
+    r = requests.get(f'https://covidtracking.com/api/v1/states/{from_state[state]}/current.json')
+    x = r.json()
+    counts[state] = {'cases': x['positive'], 'deaths': x['death']}
+
+    return {'info': info, 'counts': counts}
+
+@app.route("/covidhistory/<state>")
+def getCovidHistory(state):
+    r = requests.get(f"https://covidtracking.com/api/v1/states/{from_state[state]}/daily.json")
+    dates, cases, changes = [], [], []
+    x = r.json()
+    prev = 0
+    for i in range(len(x)):
+        date = x[len(x)-i-1] # it's given in reverse order, len(x)-i-1 is march 4th
+        dates.append(date['date']) # format: 20200621 means 2020 june 21
+        cases.append(date['positive'])
+        changes.append(date['positive'] - prev) # today - yesterday
+        prev = date['positive']
+    return {'dates': dates, 'cases': cases, 'changes': changes}
 
 def getCovidHelp(state):
     """Get donation links from google, limited requests -> should store into db"""
