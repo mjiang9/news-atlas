@@ -240,7 +240,7 @@ function getCovidInfoDiv(location, cases, deaths, link) {
         "top": "-10px",
         "position": "relative",
     })
-    $link = $("<div>").html("Learn more: <a href=\"" + link + "\">" + link+ "</a><br>").addClass("link-div").css({
+    $link = $("<div>").html("Learn more: <a target=\"_blank\" href=\"" + link + "\">" + link+ "</a><br>").addClass("link-div").css({
         "top": "-10px",
         "position": "relative",
     })
@@ -253,6 +253,10 @@ function getCovidInfoDiv(location, cases, deaths, link) {
     
     $graph.on('plotly_afterplot', function() {
         $(".nsewdrag").css("cursor", "pointer")
+        $(".plot-container").wrap("<a href=\"#\" data-toggle=\"tooltip\" title=\"Click to expand graph\"></a>")
+        $(document).ready(function(){
+          $('[data-toggle="tooltip"]').tooltip();   
+        });
     })
 }
 
