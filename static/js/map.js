@@ -248,7 +248,7 @@ function getCovidInfoDiv(location, cases, deaths, link) {
     $graph.click(function() {plotBigGraph(location)})
 
     $covid_info.append($graph, $location, $cases_and_death, $link)
-    $("#covinfo1").append($covid_info)
+    $("#covinfo1").prepend($covid_info)
     plotSmallGraph(location, $graph.attr('id'))
     
     $graph.on('plotly_afterplot', function() {
@@ -441,6 +441,7 @@ function plotSmallGraph(state, div) {
         var layout = {
             width: 35,
             height: 35,
+            hovermode: false,
             margin: {
                 l: 2,
                 r: 0,
