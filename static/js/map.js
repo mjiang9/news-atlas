@@ -366,16 +366,13 @@ function onStart() {
     getStateArticles('United States')
     var today = new Date();
     $("#date").text(dayNames[today.getDay()] + ", " + monthNames[today.getMonth()] + " " + today.getDate() + ", " + today.getFullYear());
-    $("#info").css("display", "inline-block")
-    $("#help").css("display", "inline-block")
 }
 onStart();
 
-
 map.whenReady(function(){
     $("#loader").hide();
-    // $("#info").css("display", "inline-block")
-    // $("#help").css("display", "inline-block")
+    $("#info").css("display", "inline-block")
+    $("#help").css("display", "inline-block")
 })
 
 var legend = L.control({position: 'bottomleft'});

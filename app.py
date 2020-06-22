@@ -88,12 +88,15 @@ def getCovidInfo(state):
 
 @app.route("/covidhistory/<state>")
 def getCovidHistory(state):
-    r = requests.get(f"https://covidtracking.com/api/v1/states/{from_state[state]}/daily.json")
+    if state == 'United States':
+        r = requests.get('https://covidtracking.com/api/v1/us/daily.json')
+    else:
+        r = requests.get(f"https://covidtracking.com/api/v1/states/{from_state[state]}/daily.json")
     dates, cases, changes = [], [], []
     x = r.json()
     prev = 0
     for i in range(len(x)):
-        date = x[len(x)-i-1] # it's given in reverse order, len(x)-i-1 is march 4th
+        date = x[len(x)-i-1] # it's given in reverse order, len(x)-i-1 is date of first case
         dates.append(date['date']) # format: 20200621 means 2020 june 21
         cases.append(date['positive'])
         changes.append(date['positive'] - prev) # today - yesterday
@@ -148,6 +151,7 @@ def getStateNews(state):
 
 @app.route("/news/<state>/<county>")
 def getNews(state, county = ''):
+    print(getCovidHistory(state))
     print(f"state to query: {state}, county to query: {county}")  
     conn = psycopg2.connect(DATABASE_URL, sslmode='require')
     cursor = conn.cursor()
