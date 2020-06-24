@@ -1,5 +1,5 @@
-/* const app = new Vue({
-  el: 'table',
+const app = new Vue({
+  el: '#app',
   data: {
   }
-}); */
+});
