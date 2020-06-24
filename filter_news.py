@@ -59,6 +59,8 @@ def ranker(x, state, county, top_all):
 		points += 50
 	if state in x['title']:
 		points += 50
+	if state == 'United States' and 'US' in x['title'] or 'U.S.' in x['title']:
+		points += 50
 	elif any(i in state_names for i in x['title']):
 		points -= 50
 	for i in range(len(top_all)):
@@ -88,7 +90,8 @@ def filter_news(headlines, state, county):
 		elif state and state.lower() not in title and headlines[i]['description'] and state.lower() not in headlines[i]['description'].lower():
 			if state != 'United States':
 				continue
-
+			elif headlines[i]['description'] and not any(j in title or j in headlines[i]['description'].lower() for j in [state.lower(), 'u.s.', 'trump'] + state_names):
+				continue
 		t = word_tokenize(title)
 
 		# filter out if duplicate/more than 70% similar
@@ -97,7 +100,7 @@ def filter_news(headlines, state, county):
 				results.pop() # pop previous copy
 			else:
 				continue # skip this copy
-		prev = t
+		prev = list(t)
 		
 		t = list(filter(lambda x: len(x) > 1 and x != "'s", t))
 
@@ -107,10 +110,8 @@ def filter_news(headlines, state, county):
 
 	# isolate bigrams and trigrams with more than one occurrence
 	top3 = list(filter(lambda x: x[1] > 1, sorted(d3.items(), key=lambda x:x[1], reverse=True)))
-	print(top3)
 	top3 = list(map(lambda x: x[0], top3))
 	top2 = list(filter(lambda x: x[1] > 1, sorted(d2.items(), key=lambda x:x[1], reverse=True)))
-	print(top2)
 	top2 = list(map(lambda x: x[0], top2))
 
 	# remove overlapping trigrams
@@ -130,13 +131,10 @@ def filter_news(headlines, state, county):
 	# remove overlapping unigrams
 	top = list(filter(lambda x: x[1] > 1 and x[0] not in flatten(top_all) and x[0][0].isalpha(), \
 		sorted(d.items(), key=lambda x: (x[1], len(x[0])), reverse=True)))
-	print(top)
 	top = list(map(lambda x: x[0], top))
 	
 	top_all += top
 
-	print("\ntop selected keywords: ", top_all)
-	print(len(results), len(top_all))
 	top_all = top_all[:10]
 	results = sorted(results, key=lambda x: ranker(x, state, county, top_all), reverse=True)
 
@@ -144,7 +142,6 @@ def filter_news(headlines, state, county):
 
 def get_cities(headlines):
 	d = {}
-	print(len(headlines['articles']))
 	for h in headlines['articles']:
 		cities = GeoText(h['title']).cities + GeoText(h['description']).cities
 		print(cities)

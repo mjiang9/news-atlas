@@ -39,7 +39,6 @@ function numArticles(state) {
         counts = Storage.get('counts')
         counts[state] = text['totalResults']
         Storage.set('counts', counts);
-        console.log("totalResults: ", counts[state], state, Object.keys(counts).length);
         stateGeojson.resetStyle();
     });
 }
@@ -263,8 +262,6 @@ function getCovidInfoDiv(location, cases, deaths, link) {
 function processNewsResult(state, text) {
     articles = text["articles"];
     selected = Storage.get('selected');
-
-    console.log("filtered: " + articles.length + " articles about " + state + (selected ? ", " + selected.tag : ""));
 
     $("#info").html('<h4><b>' +  (state != 'United States' ? state : 'National') + '</b> COVID-19 News<br /></h4><hr>');
     

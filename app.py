@@ -63,7 +63,6 @@ def getCovidInfoAll():
     info['USA'] = 'https://www.coronavirus.gov/'
     counts['USA'] = {'cases': us[0]['positive'], 'deaths': us[0]['death']}
 
-    print(f"got COVID info for {len(info)} states and counts for {len(counts)} states")
     return {'info': info, 'counts': counts}
 
 @app.route("/covidinfo/<state>")
@@ -122,7 +121,6 @@ def getCovidHelp(state):
         orgs.add(result['displayLink'])
     best = list(filter(lambda x: state in x['title'], links))
     other = list(filter(lambda x: state not in x['title'], links))
-    print(f"got {len(links)} links")
     return best + other
 
 def getCovidHelpAll():
@@ -134,7 +132,6 @@ def getCovidHelpAll():
 
 @app.route("/trending/<state>")
 def getTrending(state):
-    print("STATE: " + state)
     conn = psycopg2.connect(DATABASE_URL, sslmode='require')
     cursor = conn.cursor()
     query = f"SELECT * from news WHERE county = '' AND state = '{state}';"
@@ -151,7 +148,6 @@ def getStateNews(state):
 
 @app.route("/news/<state>/<county>")
 def getNews(state, county = ''):
-    print(f"state to query: {state}, county to query: {county}")  
     conn = psycopg2.connect(DATABASE_URL, sslmode='require')
     cursor = conn.cursor()
     query = f"SELECT * from news WHERE county = '{county}' AND state = '{state}';"

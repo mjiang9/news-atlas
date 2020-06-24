@@ -1,5 +1,4 @@
 function displayCoverIfNeeded() {
-    console.log("New window width: " + window.innerWidth)
     if (window.innerWidth < 800) $cover.show()
     else $cover.hide()
 }
