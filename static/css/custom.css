@@ -33,7 +33,7 @@
     margin-top: 50px;
     background-color: #fbfbfb;
     color: #111;
-    box-shadow: 0px 1px 5px;
+    box-shadow: 0px 0px 5px;
     border: none;
     z-index: 3;
 }
@@ -84,8 +84,9 @@
 }
 
 #container {
-    position: relative;
-    max-height: calc(100vh - 50px);
+    position: fixed;
+    height: 100%;
+    width: 100%;
     overflow: hidden;
 }
 
@@ -98,8 +99,9 @@ body.application {
 }
 
 #map {
-    height: calc(100vh - 280px);
-    height: calc(calc(var(--vh, 1vh) * 100) - 280px);
+    height: calc(100% - 280px);
+    max-height: 65%;
+    min-height:50%;
     margin-top: 50px;
     width: 65%;
     z-index: 1;
