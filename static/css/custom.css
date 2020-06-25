@@ -99,11 +99,11 @@ body.application {
 
 #map {
     height: calc(100vh - 280px);
+    height: calc(calc(var(--vh, 1vh) * 100) - 280px);
     margin-top: 50px;
     width: 65%;
     z-index: 1;
 }
-
 /*Popups*/
 .leaflet-popup-tip-container {
     display: none;

@@ -1,2 +1,2 @@
-web: gunicorn app:app
+web: gunicorn app:app --preload
 clock: python update_database.py
