@@ -337,7 +337,7 @@ body.application {
 #covinfo1, #covinfo2 {
     width: 49%;
     display: inline-block;
-    height: 136px;
+    height: 500px;
     background: white;
     padding: 5px 8px;
     overflow: scroll;
@@ -366,4 +366,47 @@ body.application {
     width: 550px;
     max-height: 800px;
     text-align: center;
+}
+
+@media only screen and (max-width: 420px) {
+    .navbar1 {
+        max-height: 52px;
+        border-bottom: 0.5px solid #666;
+    }
+    .navbar2 {
+        display: none;
+    }
+    #date {
+        display: none;
+    }
+    .legendbox {
+        display: none;
+    }
+    #map {
+        width: 100%;
+        min-height: 30%;
+        max-height: 35%;
+        margin-top: 0px;
+    }
+    #help {
+        width: 100%;
+        margin-top: 1px;
+    }
+    #covinfo1, #covinfo2 {
+        max-height: 12vh;
+    }
+    #covinfo1 h4 {
+        font-size: 17px;
+    }
+    #helptext {
+        display: none;
+    }
+    #helphr {
+        display: none;
+    }
+    #info {
+        margin-top: 42vh;
+        width: 100%;
+    }
+    
 }

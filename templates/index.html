@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <title>News Atlas</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="./static/lib/css//bootstrap.min.css">
   <link rel="stylesheet" href="./static/lib/css/keen-dashboards.css">
   <link rel="stylesheet" href="./static/lib/css/dc.css">
@@ -51,8 +52,8 @@
       <div id="loading-text"><h3>Loading...</h3></div>
       <div id="spinner"></div>
     </div>
-    <div id="help"><i>Click a state on the map to view recent state- and county-level news and info, zoom out to return to national-level display</i>
-      <hr style="margin: 3px">
+    <div id="help"><i id="helptext">Click a state on the map to view recent state- and county-level news and info, zoom out to return to national-level display</i>
+      <hr id="helphr" style="margin: 3px">
       <div id="covinfo">
         <div id="covinfo1"></div>
         <div id="covinfo2"></div>
