@@ -165,6 +165,7 @@ def getNews(state, county = ''):
         headlines = newsapi.get_everything(q=query_state + ' AND \"' + county + '\" AND (coronavirus OR covid)', 
                                         page_size=100, language='en',
                                         from_param=weekago.strftime("%Y-%m-%d"), sort_by="relevancy")
+        print(headlines)
         filtered_news = filter_news(headlines, state, county)
 
         # no record existed 
@@ -175,7 +176,7 @@ def getNews(state, county = ''):
         # record was empty
         else:
             query = """ UPDATE news SET result = %s, keywords = %s WHERE state = %s AND county = %s """
-            record = (json.dumps({'totalResults': filtered_news['totalResults'], 'articles': filtered_news['articles']}), state, county, filtered_news['keywords'])
+            record = (state, county, json.dumps({'totalResults': filtered_news['totalResults'], 'articles': filtered_news['articles']}), filtered_news['keywords'])
             print("Row updated")
         cursor.execute(query, record) 
         conn.commit()

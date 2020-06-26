@@ -7,6 +7,14 @@ var Storage = {
     }
 };
 
+document.getElementById("countyscript").onload = function(){ 
+    $('.loadingio-spinner-ellipsis-30ulp74dpur').remove()
+    $('#countyloadingtext').remove()
+    $('#help').prepend('<i id="helptext">Click a state on the map to view recent state- and county-level news and info, zoom out to return to national-level display</i><hr id="helphr" style="margin: 3px">');
+    }
+
+
+
 // creates map
 var mapboxAccessToken = "pk.eyJ1IjoiY2Z5dSIsImEiOiJjazlpMW8zazgxNGJ4M2ZvNGZ4c3BnaDk2In0.w2voJd0D3iz6s6KjouJ9pg";
 var map = L.map('map').setView([37.8, -96], 4);
@@ -114,6 +122,8 @@ function resetHighlight(e) {
 }
 
 function resetMap() {
+    if (Storage.get('cur_state') == null)
+        return
     Storage.set('cur_state', null)
     $("#info").html('<h4><b>National</b> COVID-19 News</h4>');
     getStateArticles('United States')

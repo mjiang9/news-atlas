@@ -15,7 +15,9 @@
     margin-right: 12px;
     display: inline-block;
 }
-
+.navbar {
+    min-height: 42px;
+}
 .navbar1 {
     background-color: #111;
     z-index: 4
@@ -36,6 +38,7 @@
     box-shadow: 0px 0px 5px;
     border: none;
     z-index: 3;
+    height: 42px;
 }
 
 #top-container {
@@ -76,10 +79,11 @@
 }
 
 #header2 {
+    margin-top: -2.5px;
     margin-left: 50%;
     transform: translateX(-50%);
     color: #222;
-    font-size: 18px;
+    font-size: 16px;
     white-space: nowrap;
 }
 
@@ -99,10 +103,10 @@ body.application {
 }
 
 #map {
-    height: calc(100% - 280px);
+    height: calc(calc(100% - 108px) - 22vh);
     max-height: 65%;
     min-height:50%;
-    margin-top: 50px;
+    margin-top: 42px;
     width: 65%;
     z-index: 1;
 }
@@ -205,7 +209,7 @@ body.application {
     width: 35%;
     height: calc(100% - 24px);
     right: 0px;
-    top: 52px;
+    top: 42px;
     z-index: 2;
     display: inline-block;
     overflow: scroll;
@@ -337,7 +341,7 @@ body.application {
 #covinfo1, #covinfo2 {
     width: 49%;
     display: inline-block;
-    height: 500px;
+    height: 20vh;
     background: white;
     padding: 5px 8px;
     overflow: scroll;
