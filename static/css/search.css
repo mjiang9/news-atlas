@@ -8,14 +8,14 @@
 #search-div {
     position: absolute;
     left: 48px;
-    top: 60px;
+    top: 55px;
     z-index: 3;
 }
 
 #search-result {
     position: absolute;
     left: 48px;
-    top: 95px;
+    top: 90px;
     background-color: rgba(250,250,250,0.85);
     min-width: 300px;
 }
