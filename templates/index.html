@@ -11,6 +11,7 @@
   <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
   <link rel="stylesheet" href="./static/css/custom.css">
   <link rel="stylesheet" href="./static/css/feedback.css">
+  <link rel="stylesheet" href="./static/css/search.css">
   <link rel="stylesheet" href="./static/css/screen-cover.css">
   <link rel="shortcut icon" href="#" />
   <meta charset="utf-8">
@@ -44,6 +45,12 @@
   </div>
 
   <div id="container">
+    <div class="dropdown">
+      <div id="search-div">
+        <input type="text" id="search" placeholder="Find a state or county" autocomplete="off">
+      </div>
+      <div id="search-result"></div>
+    </div>
     <div id="map"></div>
     <div id="info"><h4><b>National</b> COVID-19 News</h4></div>
     <div id="loader">
@@ -76,10 +83,11 @@
   <script src="./static/lib/js/covid_help_links.js"></script>
   <script src="./static/lib/js/us-states.js"></script>
   <script src="./static/lib/js/us-county.js"></script>
-  <script src="./static/js/app.js'></script>
+  <script src="./static/js/app.js"></script>
   <script src='./static/js/map.js'></script>
   <script src='./static/js/feedback.js'></script>
   <script src='./static/js/querybar.js'></script>
+  <script src='./static/js/search.js'></script>
   <script src='./static/js/screen-cover.js'></script>
 </body>
 </html>
