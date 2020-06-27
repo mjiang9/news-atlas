@@ -15,7 +15,9 @@
     margin-right: 12px;
     display: inline-block;
 }
-
+.navbar {
+    min-height: 42px;
+}
 .navbar1 {
     background-color: #111;
     z-index: 4
@@ -33,9 +35,10 @@
     margin-top: 50px;
     background-color: #fbfbfb;
     color: #111;
-    box-shadow: 0px 1px 5px;
+    box-shadow: 0px 0px 5px;
     border: none;
     z-index: 3;
+    height: 42px;
 }
 
 #top-container {
@@ -76,16 +79,18 @@
 }
 
 #header2 {
+    margin-top: -2.5px;
     margin-left: 50%;
     transform: translateX(-50%);
     color: #222;
-    font-size: 18px;
+    font-size: 16px;
     white-space: nowrap;
 }
 
 #container {
-    position: relative;
-    max-height: calc(100vh - 50px);
+    position: fixed;
+    height: 100%;
+    width: 100%;
     overflow: hidden;
 }
 
@@ -98,12 +103,13 @@ body.application {
 }
 
 #map {
-    height: calc(100vh - 280px);
-    margin-top: 50px;
+    height: calc(calc(100% - 108px) - 22vh);
+    max-height: 65%;
+    min-height:50%;
+    margin-top: 42px;
     width: 65%;
     z-index: 1;
 }
-
 /*Popups*/
 .leaflet-popup-tip-container {
     display: none;
@@ -203,7 +209,7 @@ body.application {
     width: 35%;
     height: calc(100% - 24px);
     right: 0px;
-    top: 52px;
+    top: 42px;
     z-index: 2;
     display: inline-block;
     overflow: scroll;
@@ -335,7 +341,7 @@ body.application {
 #covinfo1, #covinfo2 {
     width: 49%;
     display: inline-block;
-    height: 136px;
+    height: 20vh;
     background: white;
     padding: 5px 8px;
     overflow: scroll;
@@ -364,4 +370,47 @@ body.application {
     width: 550px;
     max-height: 800px;
     text-align: center;
+}
+
+@media only screen and (max-width: 420px) {
+    .navbar1 {
+        max-height: 52px;
+        border-bottom: 0.5px solid #666;
+    }
+    .navbar2 {
+        display: none;
+    }
+    #date {
+        display: none;
+    }
+    .legendbox {
+        display: none;
+    }
+    #map {
+        width: 100%;
+        min-height: 30%;
+        max-height: 35%;
+        margin-top: 0px;
+    }
+    #help {
+        width: 100%;
+        margin-top: 1px;
+    }
+    #covinfo1, #covinfo2 {
+        max-height: 12vh;
+    }
+    #covinfo1 h4 {
+        font-size: 17px;
+    }
+    #helptext {
+        display: none;
+    }
+    #helphr {
+        display: none;
+    }
+    #info {
+        margin-top: 42vh;
+        width: 100%;
+    }
+    
 }

@@ -7,6 +7,15 @@ var Storage = {
     }
 };
 
+document.getElementById("countyscript").onload = function(){ 
+    console.log("loaded county maps")
+    $('.loadingio-spinner-ellipsis-30ulp74dpur').remove()
+    $('#countyloadingtext').remove()
+    $('#help').prepend('<i id="helptext">Click a state on the map to view recent state- and county-level news and info, zoom out to return to national-level display</i><hr id="helphr" style="margin: 3px">');
+}
+
+
+
 // creates map
 var mapboxAccessToken = "pk.eyJ1IjoiY2Z5dSIsImEiOiJjazlpMW8zazgxNGJ4M2ZvNGZ4c3BnaDk2In0.w2voJd0D3iz6s6KjouJ9pg";
 var map = L.map('map').setView([37.8, -96], 4);
@@ -71,18 +80,14 @@ function style(feature) {
 var popup = L.popup();
 function movePopup(e) {
     type = (e.target.feature.properties['COUNTY'] != null) ? "county" : "state";
+    if (e.target.feature.properties['NAME'] == 'District of Columbia')
+        type = "state";
     popup.setContent("<b>" + e.target.feature.properties['NAME'] + (type == "county" ? " County" : "") +
                      "</b><br><i><small>Click to view " + type + " news</small></i>");
-    dx = (type == "county" || map.getZoom() > 5) ? 0.5 : 0.75;
-    dy = dx;
-    if (e.latlng.lat + 3 > map.getBounds().getNorth())
-        dy = (type == "county" || map.getZoom() > 5) ? -1 : -3.5;
-    if (e.latlng.lng + 5 < map.getBounds().getWest())
-        dx = (type == "county" || map.getZoom() > 5) ? -2 : -5;
-    if (map.getZoom() > 7) {
-        dx = dx/2;
-        dy = dy/2;
-    }
+    dx = (map.getBounds().getEast()-map.getBounds().getWest())/15; 
+    dy = (map.getBounds().getNorth()-map.getBounds().getSouth())/25;
+    if (map.getBounds().getEast() < e.latlng.lng + dx*2)
+        dx = -dx*1.5;
     popup.setLatLng(L.latLng(e.latlng.lat + dy, e.latlng.lng + dx)).openOn(map);
 }
 
@@ -115,6 +120,8 @@ function resetHighlight(e) {
 }
 
 function resetMap() {
+    if (Storage.get('cur_state') == null)
+        return
     Storage.set('cur_state', null)
     $("#info").html('<h4><b>National</b> COVID-19 News</h4>');
     getStateArticles('United States')
@@ -152,6 +159,9 @@ function processUSResult(text) {
 }
 
 function getCountyArticles(county, state) {
+    if (county == 'District of Columbia')
+        county = ''
+
     fetch('/news/' + state + "/" + county)
     .then(function (response) {
         return response.json();
@@ -244,10 +254,17 @@ function getCovidInfoDiv(location, cases, deaths, link) {
         "top": "-10px",
         "position": "relative",
     })
+    $link2 = $("<div>").html("NYC Velocity Map: <a target=\"_blank\" href=\"http://covidvelocity.com\">http://covidvelocity.com</a><br>").addClass("link-div").css({
+        "top": "-15px",
+        "position": "relative",
+    })
+
 
     $graph.click(function() {plotBigGraph(location)})
 
     $covid_info.append($graph, $location, $cases_and_death, $link)
+    if (location == "New York")
+        $covid_info.append($link2)
     $("#covinfo1").prepend($covid_info)
     plotSmallGraph(location, $graph.attr('id'))
     
@@ -345,13 +362,17 @@ function stateLayerOnClick(layer) {
     if (lastStateLayer)
         lastStateLayer.on('click', stateOnClick);
 
-    countyGeojson = L.geoJson(countyData, {
-        style: style,
-        onEachFeature: onEachCounty,
-        filter: function(feature) {
-            return feature.properties.STATE === layer.feature.properties.STATE;
-        }
-    }).addTo(map);
+    if (typeof countyData !== 'undefined') {
+        countyGeojson = L.geoJson(countyData, {
+            style: style,
+            onEachFeature: onEachCounty,
+            filter: function(feature) {
+                return feature.properties.STATE === layer.feature.properties.STATE;
+            }
+        }).addTo(map);
+    } else {
+        console.log("County data not ready");
+    }
 
     layer.off('click', stateOnClick);
     lastStateLayer = layer;
@@ -360,6 +381,8 @@ function stateLayerOnClick(layer) {
 
 function countyOnClick(e) {
     county = e.target.feature.properties['NAME'] + " County"
+    if (e.target.feature.properties['NAME'] == 'District of Columbia')
+        county = ''
     countyOnClickWithName(county)
 }
 

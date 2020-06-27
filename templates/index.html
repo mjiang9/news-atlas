@@ -2,9 +2,11 @@
 <html lang="en">
 <head>
   <title>News Atlas</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="./static/lib/css//bootstrap.min.css">
   <link rel="stylesheet" href="./static/lib/css/keen-dashboards.css">
   <link rel="stylesheet" href="./static/lib/css/dc.css">
+  <link rel="stylesheet" href="./static/css/loadingdots.css">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
   integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
   crossorigin=""/>
@@ -18,7 +20,8 @@
 
 </head>
 <body class="application">
-  <div class="navbar navbar-inverse navbar-fixed-top navbar1" role="navigation">
+<div id="app">  
+<div class="navbar navbar-inverse navbar-fixed-top navbar1" role="navigation">
     <div class="container-fluid" id="top-container">
       <div class="dropdown">
         <i class="fa fa-bars fa-2x" aria-hidden="true" id="menu"></i>
@@ -36,14 +39,13 @@
   </div>
   <div class="navbar navbar-inverse navbar-fixed-top navbar2" role="navigation">
     <div class="container-fluid">
-      <div class="navbar-header navbar-brand" id="header2">Recent  
-        <b>COVID-19 
+      <div class="navbar-header navbar-brand" id="header2">  
+        <i>Recent COVID-19 
         <!-- <span class="caret"></span> -->
-        </b> Headlines by State and County
+        Headlines by State and County</i>
       </div>
     </div>
   </div>
-
   <div id="container">
     <div class="dropdown">
       <div id="search-div">
@@ -57,15 +59,18 @@
       <div id="loading-text"><h3>Loading...</h3></div>
       <div id="spinner"></div>
     </div>
-    <div id="help"><i>Click a state on the map to view recent state- and county-level news and info, zoom out to return to national-level display</i>
-      <hr style="margin: 3px">
+    <div id="help">
+    <i id="countyloadingtext">County maps loading</i>
+<div class="loadingio-spinner-ellipsis-30ulp74dpur"><div class="ldio-fneqbvt8ty">
+<div></div><div></div><div></div><div></div><div></div>
+</div></div>
       <div id="covinfo">
         <div id="covinfo1"></div>
         <div id="covinfo2"></div>
       </div>
     </div>
   </div>
-
+</div>
 
   <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
    integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
@@ -78,11 +83,10 @@
   <script src="./static/lib/js/queue.js"></script>
   <script src='./static/lib/js/countdict.js'></script>
   <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-  <!-- <script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.js"></script> -->  
-  <!-- <script src="./static/lib/js/keen.min.js"></script> -->
+  <!--<script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.js"></script> --> 
   <script src="./static/lib/js/covid_help_links.js"></script>
   <script src="./static/lib/js/us-states.js"></script>
-  <script src="./static/lib/js/us-county.js"></script>
+  <script async id='countyscript' src="./static/lib/js/us-county.js"></script>
   <script src="./static/js/app.js"></script>
   <script src='./static/js/map.js'></script>
   <script src='./static/js/feedback.js'></script>

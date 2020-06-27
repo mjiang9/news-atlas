@@ -9,7 +9,7 @@ from flask_sqlalchemy import SQLAlchemy
 import os
 import psycopg2
 import datetime as dt
-from filter_news import filter_news, get_cities
+from filter_news import filter_news, get_cities, countydict
 import requests
 
 # Init
@@ -102,34 +102,6 @@ def getCovidHistory(state):
         prev = date['positive']
     return {'dates': dates, 'cases': cases, 'changes': changes}
 
-def getCovidHelp(state):
-    """Get donation links from google, limited requests -> should store into db"""
-    key = 0
-    cx = '004593184947520844685:vitre6m1avi'
-    query = f'\"{state}\" coronavirus relief donate'
-    u = f'https://www.googleapis.com/customsearch/v1?key={key}&cx={cx}&q={query}'
-    r = requests.get(u)
-    results = r.json()
-    links = []
-    orgs = set()
-    for result in results['items']:
-        if 'news' in result['link'] or 'https' not in result['link'] or 'www' not in result['displayLink']:
-            continue
-        if result['displayLink'] in orgs or 'nytimes' in result['link'] or any(i in result['snippet'] for i in ['CEO', 'Feeding America', 'article', 'owner', 'sport', 'team']):
-            continue
-        links.append({'title': result['title'], 'link': result['link']})
-        orgs.add(result['displayLink'])
-    best = list(filter(lambda x: state in x['title'], links))
-    other = list(filter(lambda x: state not in x['title'], links))
-    return best + other
-
-def getCovidHelpAll():
-    d = {}
-    to_state = {'AL': 'Alabama', 'AK': 'Alaska', 'AS': 'American Samoa', 'AZ': 'Arizona', 'AR': 'Arkansas', 'CA': 'California', 'CO': 'Colorado', 'CT': 'Connecticut', 'DE': 'Delaware', 'DC': 'District of Columbia', 'FL': 'Florida', 'GA': 'Georgia', 'GU': 'Guam', 'HI': 'Hawaii', 'ID': 'Idaho', 'IL': 'Illinois', 'IN': 'Indiana', 'IA': 'Iowa', 'KS': 'Kansas', 'KY': 'Kentucky', 'LA': 'Louisiana', 'ME': 'Maine', 'MD': 'Maryland', 'MA': 'Massachusetts', 'MI': 'Michigan', 'MN': 'Minnesota', 'MS': 'Mississippi', 'MO': 'Missouri', 'MT': 'Montana', 'NE': 'Nebraska', 'NV': 'Nevada', 'NH': 'New Hampshire', 'NJ': 'New Jersey', 'NM': 'New Mexico', 'NY': 'New York', 'NC': 'North Carolina', 'ND': 'North Dakota', 'MP': 'Northern Mariana Islands', 'OH': 'Ohio', 'OK': 'Oklahoma', 'OR': 'Oregon', 'PA': 'Pennsylvania', 'PR': 'Puerto Rico', 'RI': 'Rhode Island', 'SC': 'South Carolina', 'SD': 'South Dakota', 'TN': 'Tennessee', 'TX': 'Texas', 'UT': 'Utah', 'VT': 'Vermont', 'VI': 'Virgin Islands', 'VA': 'Virginia', 'WA': 'Washington', 'WV': 'West Virginia', 'WI': 'Wisconsin', 'WY': 'Wyoming'}
-    for state in to_state.values():
-        d[state] = getCovidHelp(state)
-    return d
-
 @app.route("/trending/<state>")
 def getTrending(state):
     conn = psycopg2.connect(DATABASE_URL, sslmode='require')
@@ -145,6 +117,14 @@ def getTrending(state):
 @app.route("/news/<state>")
 def getStateNews(state):
     return getNews(state)
+
+def getCountyQ(county, state):
+    if (county, state) in countydict:
+        ret = "(" + county
+        for city in countydict[(county, state)]:
+            ret += " OR " + city 
+        return ret + ")" 
+    return '\"' + county + '\"'
 
 @app.route("/news/<state>/<county>")
 def getNews(state, county = ''):
@@ -162,7 +142,9 @@ def getNews(state, county = ''):
         else:
             query_state = state
         weekago = dt.datetime.now() - dt.timedelta(days=7)
-        headlines = newsapi.get_everything(q=query_state + ' AND \"' + county + '\" AND (coronavirus OR covid)', 
+        query_county = getCountyQ(county, state)
+        print(query_county)
+        headlines = newsapi.get_everything(q=query_state + ' AND ' + query_county + ' AND (coronavirus OR covid)', 
                                         page_size=100, language='en',
                                         from_param=weekago.strftime("%Y-%m-%d"), sort_by="relevancy")
         filtered_news = filter_news(headlines, state, county)
@@ -175,7 +157,7 @@ def getNews(state, county = ''):
         # record was empty
         else:
             query = """ UPDATE news SET result = %s, keywords = %s WHERE state = %s AND county = %s """
-            record = (json.dumps({'totalResults': filtered_news['totalResults'], 'articles': filtered_news['articles']}), state, county, filtered_news['keywords'])
+            record = (json.dumps({'totalResults': filtered_news['totalResults'], 'articles': filtered_news['articles']}), filtered_news['keywords'], state, county)
             print("Row updated")
         cursor.execute(query, record) 
         conn.commit()
