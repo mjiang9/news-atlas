@@ -17,6 +17,8 @@ $("#countyscript").on("load", function(){
 
     // load county data
     for (let county of countyData['features']) {
+        if (county['properties']['NAME'] === "District of Columbia") continue;
+
         let id = county['properties']['STATE']
         let name = county['properties']['NAME'] + " County, " + stateIDToName[id]
         let coord = county['geometry']['coordinates']
@@ -27,7 +29,7 @@ $("#countyscript").on("load", function(){
     }
     
     var names = Object.keys(nameToCoords);
-    const NUM_MATCHES = 4; // number of matches shown
+    const NUM_MATCHES = 50; // number of matches shown
 
     $("#search").on('input', function() {
         $("#search-result").empty()
@@ -60,6 +62,8 @@ $("#countyscript").on("load", function(){
             }
         }
     })
+
+    $("#search-div").css("display", "block")
 })
 
 function getLevel(data) {
