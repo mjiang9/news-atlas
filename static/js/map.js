@@ -29,6 +29,7 @@ L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_toke
 
 var countyGeojson, stateGeojson;
 var lastStateLayer;
+var stateToLayerID = {};
 
 function getColor(d) {
     return d > 8000  ? '#BD0026' :
@@ -347,10 +348,14 @@ var dayNames = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Sat
 
 function stateOnClick(e) {
     var layer = e.target;
+    stateLayerOnClick(layer)
+    zoomToFeature(e);
+}
+
+function stateLayerOnClick(layer) {
     layer.closePopup();
     getNewsState(layer.feature.properties);  
-    zoomToFeature(e);
-  
+
     if (map.hasLayer(countyGeojson))
         map.removeLayer(countyGeojson);
 
@@ -374,11 +379,14 @@ function stateOnClick(e) {
     lastZoomLevel = map.getZoom();
 }
 
-// add action
 function countyOnClick(e) {
     county = e.target.feature.properties['NAME'] + " County"
     if (e.target.feature.properties['NAME'] == 'District of Columbia')
         county = ''
+    countyOnClickWithName(county)
+}
+
+function countyOnClickWithName(county) {
     state = Storage.get('cur_state')
     console.log("Clicked " + county + ", " + state)
     if ($('#countyheader').length)
@@ -409,6 +417,10 @@ var stateGeojson = L.geoJson(statesData, {
     style: style,
     onEachFeature: onEachState
 }).addTo(map);
+
+stateGeojson.eachLayer(function (layer) {
+    stateToLayerID[layer.feature.properties.NAME] = stateGeojson.getLayerId(layer)
+})
 
 map.on('zoomend', function(){
     if (map.getZoom() < 5) resetMap();
