@@ -84,8 +84,8 @@ def filter_news(headlines, state, county):
             title = title.replace(headlines[i]['source']['name'].lower(), '')
         if ' - ' in title:
             rind = title.rindex(' - ')
-            if 'news' in title[rind+3:] or 'reuters' in title[rind+3:] or title[rind+3:] in headlines[i]['source']['name'].lower():
-                title = title[:rind]
+            title = title[:rind]
+               
         # filter out if doesn't contain name of county or state
         if county:
             if (county, state) in countydict:
