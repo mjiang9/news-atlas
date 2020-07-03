@@ -13,12 +13,16 @@ $modal.appendTo(document.body)
 $modal.hide()
 $confirm_text.hide()
 
-$close.click(function() {
+function hideModal(e) {
+    if (e.target !== this) return;
     $modal.hide()
     $input.show()
     $submit.show()
     $confirm_text.hide()
-})
+}
+
+$modal.click(hideModal)
+$close.click(hideModal)
 
 $submit.click(function() {
     fetch('/save/' + $input.val()) //This is async? but seems to be working

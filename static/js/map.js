@@ -508,6 +508,12 @@ function dateToString(date) {
     return date.toString().substring(4, 6) + "/" + date.toString().substring(6, 8)
 }
 
+function closeGraph(e) {
+    if (e.target !== this) return;
+    $plot_modal.empty()
+    $plot_modal.remove()
+}
+
 function plotBigGraph(state) {
     fetch('/covidhistory/' + state)
     .then(function (response) {
@@ -562,10 +568,8 @@ function plotBigGraph(state) {
         $plot_modal.append($plot_box)
         $plot_modal.appendTo(document.body)
 
-        $close_plot.click(function() {
-            $plot_modal.empty()
-            $plot_modal.remove()
-        })
+        $plot_modal.click(closeGraph)
+        $close_plot.click(closeGraph)
  
         Plotly.newPlot($big_plot.attr("id"), data, layout);
     });
