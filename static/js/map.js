@@ -18,7 +18,10 @@ document.getElementById("countyscript").onload = function(){
 
 // creates map
 var mapboxAccessToken = "pk.eyJ1IjoiY2Z5dSIsImEiOiJjazlpMW8zazgxNGJ4M2ZvNGZ4c3BnaDk2In0.w2voJd0D3iz6s6KjouJ9pg";
-var map = L.map('map').setView([37.8, -96], 4);
+var map = L.map('map', {
+    minZoom: 3,
+    maxBounds: [[-23.2, -226], [77.8, -6]]
+}).setView([37.8, -96], 4);
 
 L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=' + mapboxAccessToken, {
     id: 'mapbox/light-v9',
