@@ -31,7 +31,7 @@ def get_news(state):
     else:
         query_state = state
     weekago = dt.datetime.now() - dt.timedelta(days=7)
-    headlines = newsapi.get_everything(q=query_state + ' AND (coronavirus OR covid)', 
+    headlines = newsapi.get_everything(q=query_state + ' AND (coronavirus OR covid) NOT "reuters uk" NOT "reuters india" NOT "reuters canada"', 
                                     page_size=100, language='en',
                                     from_param=weekago.strftime("%Y-%m-%d"), sort_by="relevancy")
     filtered_news = filter_news(headlines, state, '')
