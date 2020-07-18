@@ -18,7 +18,10 @@ document.getElementById("countyscript").onload = function(){
 
 // creates map
 var mapboxAccessToken = "pk.eyJ1IjoiY2Z5dSIsImEiOiJjazlpMW8zazgxNGJ4M2ZvNGZ4c3BnaDk2In0.w2voJd0D3iz6s6KjouJ9pg";
-var map = L.map('map').setView([37.8, -96], 4);
+var map = L.map('map', {
+    minZoom: 3,
+    maxBounds: [[-23.2, -226], [77.8, -6]]
+}).setView([37.8, -96], 4);
 
 L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=' + mapboxAccessToken, {
     id: 'mapbox/light-v9',
@@ -375,6 +378,7 @@ function stateLayerOnClick(layer) {
         console.log("County data not ready");
     }
 
+    $(".back-button").css("display", "block")
     layer.off('click', stateOnClick);
     lastStateLayer = layer;
     lastZoomLevel = map.getZoom();
@@ -423,8 +427,14 @@ stateGeojson.eachLayer(function (layer) {
     stateToLayerID[layer.feature.properties.NAME] = stateGeojson.getLayerId(layer)
 })
 
-map.on('zoomend', function(){
-    if (map.getZoom() < 5) resetMap();
+map.on('zoomend', function(e){
+    if (map.getZoom() < 5) {
+        resetMap();
+        $(".back-button").css("display", "none")
+    }
+    else {
+        $(".back-button").css("display", "block")
+    }
 })
 
 function onStart() {
@@ -461,6 +471,18 @@ legend.onAdd = function (map) {
 };
 
 legend.addTo(map);
+
+
+var back_button = L.control({position: 'bottomleft'});
+
+back_button.onAdd = function (map) {
+    let div = L.DomUtil.create('div', 'back-button');
+    div.innerHTML += '<b>Back to Main</b>'
+    L.DomEvent.addListener(div, 'click', function(){ map.setView([37.8, -96], 4); })
+    return div;
+}
+
+back_button.addTo(map)
 
 function plotSmallGraph(state, div) {
     fetch('/covidhistory/' + state)
@@ -507,6 +529,12 @@ function plotSmallGraph(state, div) {
 
 function dateToString(date) {
     return date.toString().substring(4, 6) + "/" + date.toString().substring(6, 8)
+}
+
+function closeGraph(e) {
+    if (e.target !== this) return;
+    $plot_modal.empty()
+    $plot_modal.remove()
 }
 
 function plotBigGraph(state) {
@@ -563,10 +591,8 @@ function plotBigGraph(state) {
         $plot_modal.append($plot_box)
         $plot_modal.appendTo(document.body)
 
-        $close_plot.click(function() {
-            $plot_modal.empty()
-            $plot_modal.remove()
-        })
+        $plot_modal.click(closeGraph)
+        $close_plot.click(closeGraph)
  
         Plotly.newPlot($big_plot.attr("id"), data, layout);
     });
