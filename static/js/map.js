@@ -232,7 +232,8 @@ function trimnum(num) {
     if (num > 1000000) return Math.round(num/1000000 *100)/100 + "M";
     if (num > 10000) return Math.round(num/1000 *100)/100 + "K";
     if (num > 1000) {
-        if (num%1000 < 100) return Math.round(num/1000) + ",0" + num%1000;
+        if (num%1000 < 10) return Math.round(num/1000) + ",00" + num%1000;
+        else if (num%1000 < 100) return Math.round(num/1000) + ",0" + num%1000;
         return Math.round(num/1000) + "," + num%1000;
     }
     return num;
