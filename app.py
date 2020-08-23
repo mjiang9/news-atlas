@@ -96,6 +96,8 @@ def getCovidHistory(state):
     prev = 0
     for i in range(len(x)):
         date = x[len(x)-i-1] # it's given in reverse order, len(x)-i-1 is date of first case
+        if not date['positive']:
+            date['positive'] = prev
         dates.append(date['date']) # format: 20200621 means 2020 june 21
         cases.append(date['positive'])
         changes.append(date['positive'] - prev) # today - yesterday
